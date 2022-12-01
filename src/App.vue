@@ -1,28 +1,48 @@
 <template>
   <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+    <!--    <MainPage/>-->
+    <!--    <UserDataCollect/>-->
+    <router-view></router-view>
   </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+// import MainPage from "@/pages/MainPage";
+// import UserDataCollect from "@/pages/UserDataCollect";
 
 export default {
   name: 'App',
   components: {
-    HelloWorld
+    // MainPage
+    // UserDataCollect
+  },
+  mounted() {
+    this.$bus.$on('EnterExperiment', () => {
+      this.$router.push({
+        name: 'MainPage'
+      })
+    })
   }
 }
 </script>
 
 <style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
+.navigation {
+  font-family: "Arial", "Microsoft YaHei", "黑体", "宋体", sans-serif;
+  font-size: x-large;
+  font-weight: bolder;
 }
+
+.title {
+  font-family: "Arial", "Microsoft YaHei", "黑体", "宋体", sans-serif;
+}
+
+.text {
+  font-family: "Arial", "Microsoft YaHei", "黑体", "宋体", sans-serif;
+}
+
+.under_line {
+  font-weight: 1000;
+}
+
 </style>

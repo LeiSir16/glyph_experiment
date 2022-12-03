@@ -153,15 +153,15 @@ const state = {
         }
     ],
     ssiColorName: {
-        Sufficient_Food: '食物充足量指数',
-        Sufficient_Drinking_Water: '饮用水充足量指数',
-        Safe_Sanitation: '安全卫生指数',
+        Sufficient_Food: '营养不良指数',
+        Sufficient_Drinking_Water: '基础供水服务指数',
+        Safe_Sanitation: '基础卫生服务指数',
         Education: '教育指数',
         Healthy_Life: '健康生活指数',
         Gender_Equality: '性别平等指数',
         Income_Distribution: '收入分配指数',
         Population_Growth: '人口增长指数',
-        Good_Governance: '治理良好度'
+        Good_Governance: '政府治理水平指数'
     },
     ExperimentAData: {},
     ExperimentBData: {},

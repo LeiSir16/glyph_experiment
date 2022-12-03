@@ -311,7 +311,7 @@ export function saveAsJson(data, experiment, success) {
             [e]: data
         }
         let prefix = infor.sId;
-        let blob = new Blob([JSON.stringify(result)], {type: "text/plain;charset=utf-8"});
+        let blob = new Blob([JSON.stringify(result)], {type: "application/json"});
         let fileName = prefix + "-" + e + "-" + name + ".json";
         saveAs(blob, fileName);
         success();

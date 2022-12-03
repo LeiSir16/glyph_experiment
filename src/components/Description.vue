@@ -15,12 +15,12 @@
       </el-row>
       <el-row>
         <el-col :span="23" :offset="1" class="title">
-          每种数据最多可以通过<span class="under_line">{{ desCondition.max }}</span>个圆圈表示
+          每类数据最多可以通过<span class="under_line">{{ desCondition.max }}</span>个圆圈表示
         </el-col>
       </el-row>
       <el-row>
         <el-col :span="23" :offset="1" class="title">
-          每种数据表达的值的范围是<span class="under_line">[0,{{ desCondition.value * desCondition.max }}]</span>
+          每类数据表达的值的范围是<span class="under_line">[0,{{ desCondition.value * desCondition.max }}]</span>
         </el-col>
       </el-row>
     </template>
@@ -28,22 +28,22 @@
     <template v-else-if="desCondition.glyph===2">
       <el-row>
         <el-col :span="23" :offset="1" class="text">
-          小条纹填充的颜色表达了<span class="under_line">数据的类别</span>
+          条纹段填充的颜色表达了<span class="under_line">数据的类别</span>
         </el-col>
       </el-row>
       <el-row>
         <el-col :span="23" :offset="1" class="text">
-          每个小条纹表示的值为<span class="under_line">{{ desCondition.value.toFixed(2) }}</span>
+          每个条纹段表示的值为<span class="under_line">{{ desCondition.value.toFixed(2) }}</span>
         </el-col>
       </el-row>
       <el-row>
         <el-col :span="23" :offset="1" class="text">
-          每种数据最多可以通过<span class="under_line">{{ desCondition.max }}</span>个小条纹编码
+          每类数据最多可以通过<span class="under_line">{{ desCondition.max }}</span>个小条纹编码
         </el-col>
       </el-row>
       <el-row>
         <el-col :span="23" :offset="1" class="text">
-          每种数据表达的值的范围是<span class="under_line">[0,{{ desCondition.value * desCondition.max }}]</span>
+          每类数据表达的值的范围是<span class="under_line">[0,{{ desCondition.value * desCondition.max }}]</span>
         </el-col>
       </el-row>
       <el-row>

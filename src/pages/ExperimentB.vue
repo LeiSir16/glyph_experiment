@@ -47,7 +47,7 @@
           </el-row>
           <template v-if="isDemo">
             <!--demo界面允许重复测试-->
-            <el-row type="flex" align="middle" style="margin-top: 5%">
+            <el-row type="flex" align="middle" style="margin-top: 3%">
               <el-col :span="8" :offset="11">
                 <el-button plain icon="el-icon-refresh-left" class="title under_line" @click="resetGlyph">重置示例
                 </el-button>
@@ -493,6 +493,6 @@ export default {
   padding-left: 5%;
   padding-top: 1%;
   font-family: "Gotham Black", serif;
-  font-size: x-large;
+  font-size: xxx-large;
 }
 </style>

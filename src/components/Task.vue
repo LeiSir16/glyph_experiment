@@ -11,7 +11,8 @@
       <!--说明-->
       <el-row type="flex" align="middle" class="text shuoming">
         <el-col :span="23" :offset="1">
-          <span class="under_line">说明：</span>请在下方输入或长按+/-提交您估算的结果(小数点后两位)，<span class="under_line">并点击【保存结果】按钮保存</span>。保存后即可点击<span
+          <span class="under_line">说明：</span>请在下方输入或长按+/-提交您估算的结果(小数点后两位)，<span
+            class="under_line">并点击【保存结果】按钮保存</span>。保存后即可点击<span
             v-show="isNext">下一步按钮进行后续实验</span><span v-show="!isNext">提交结果按钮导出结果</span>
         </el-col>
       </el-row>
@@ -53,31 +54,21 @@ export default {
       isSave: false
     };
   },
-  computed: {
-    experimentBChooseColor() {
-      let ssiColor = this.$store.state.ssiColorEncoding;
-      for (let c of ssiColor) {
-        if (c.name === this.experimentBChoose) {
-          return c.color;
-        }
-      }
-      return 'black';
-    },
-
-  },
   methods: {
     nextStep(e) {
-      if (this.taskCondition.experiment === 2) {
+      if (this.taskCondition.experiment === -2) {
+        // 第一个实验的训练实验
+        this.$bus.$emit('nextStepExperimentBTraining');
+      } else if (this.taskCondition.experiment === 2) {
         this.$bus.$emit('nextSmallExperimentBPage');
-        this.differenceSlider = 0;
-        // 进到一个新实验先禁用下一步按钮，保存之后才能启用
-        this.isSave = false;
       }
     },
     // 将实验的结果存在Cookie中
     submitResult() {
       if (this.taskCondition.experiment === 2) {
         this.$bus.$emit('experimentBResultLocal', getCurrentTime());
+      } else if (this.taskCondition.experiment === -2) {
+        this.$bus.$emit('experimentBTrainingResultLocal');
       }
     },
     /**
@@ -115,19 +106,30 @@ export default {
       if (this.taskCondition.experiment === 2) {
         let rightScore = this.calculateDifference(this.taskCondition.data[0], this.taskCondition.data[1], this.experimentBChoose.split('_').join(" "))
         let result = {
-          rightValue: rightScore,
+          rightValue: rightScore.toFixed(2),  // 直接保留两位小数
           chooseValue: this.differenceSlider,
           cityOne: this.taskCondition.data[0],
           cityTwo: this.taskCondition.data[1],
           attr: this.experimentBChoose
         };
         this.$bus.$emit('submitChoose', result);
+      } else if (this.taskCondition.experiment === -2) {
+        // 实验一的训练就只是弹窗
+        this.$bus.$emit('experimentBTrainingSubmit');
       }
+    },
+    // 重新生成一种属性
+    randomShowAttributes(value) {
+      let attrs = this.findDifference(value.data[0], value.data[1], value.circleValue / 2);
+      let index = Math.floor(Math.random() * attrs.length);
+      return attrs[index].split(" ").join("_");
     }
   },
   mounted() {
     this.$bus.$on('resetValue', () => {
+      // 重置示例同时也再随机生成一种属性
       this.differenceSlider = 0;
+      this.experimentBChoose = this.randomShowAttributes(this.taskCondition);
     });
     this.$bus.$on('enableNextStep', () => {
       this.isSave = true;
@@ -135,15 +137,21 @@ export default {
   },
   watch: {
     taskCondition: {
+      immediate: true,
       deep: true,
       handler(newVal, oldVal) {
-        if (newVal && newVal.experiment === 2) {
+        if (newVal && (newVal.experiment === 2 || newVal.experiment === -2)) {
           // 找出大于等于阈值的属性
-          let attrs = this.findDifference(newVal.data[0], newVal.data[1], newVal.circleValue / 2);
-          let index = Math.floor(Math.random() * attrs.length);
-          this.experimentBChoose = attrs[index].split(" ").join("_");
-          if (newVal.active === newVal.singleExperiment * 2 + 1) {
+          this.experimentBChoose = this.randomShowAttributes(newVal);
+          if (newVal.active === newVal.singleExperiment * 2 - 1) {
             this.isNext = false;
+          } else {
+            this.isNext = true;
+          }
+          // 当进入到一个新的小实验时要禁用下一步按钮并将数值选择框的值归零
+          if (newVal.active !== oldVal.active) {
+            this.isSave = false;
+            this.differenceSlider = 0;
           }
         }
       }

@@ -71,7 +71,7 @@
           <el-row class="B_description">
             <el-row type="flex" align="middle">
               <el-col :span="19" :offset="9">
-                <div class="title color_title">图形解释</div>
+                <div class="title color_title">可视化解释</div>
               </el-col>
             </el-row>
             <el-row type="flex" align="middle">
@@ -299,7 +299,7 @@ export default {
     storeCurrentExperiment() {
       this.experimentBUserData.childExperiment.push({
         // 1表示peaGlyph，2表示stripeGlyph
-        storageGlyph: this.storageGlyph,
+        glyphType: this.storageGlyph,
         stripeNum: this.stripeNum,
         stripeValue: this.stripeValue,
         startTime: this.startTime,
@@ -307,7 +307,7 @@ export default {
         submitResultTime: this.submitResultTime,
         chooseValue: this.chooseValue,
         correctValue: this.correctValue,
-        differenceCity: this.differenceCity,
+        countryInfo: this.differenceCity,
         findAttr: this.findAttr
       });
     }
@@ -465,32 +465,5 @@ export default {
 </script>
 
 <style scoped>
-.B_legend {
-  border: 3px solid black;
-  border-radius: 5px 5px 0 0;
-}
 
-.B_description {
-  border-left: 3px solid black;
-  border-right: 3px solid black;
-}
-
-.B_task {
-  border: 3px solid black;
-  border-radius: 0 0 5px 5px;
-}
-
-.color_title {
-  font-size: x-large;
-  font-weight: bolder;
-  margin: 8px 0;
-}
-
-.bianhao {
-  text-align: center;
-  padding-left: 8%;
-  padding-top: 1%;
-  font-family: "Gotham Black", serif;
-  font-size: xxx-large;
-}
 </style>

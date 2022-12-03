@@ -16,21 +16,22 @@
         </el-row>
         <el-row>
           <el-col :span="7" :offset="8">
-            <el-form label-position="right" :rules="rules" ref="formUser" label-width="80px" :model="userInfor">
+            <!--:model校验的时候要保证该字段与信息对象变量名一致-->
+            <el-form label-position="right" :rules="rules" ref="formUser" label-width="80px" :model="userInfo">
               <el-form-item label="实验编号">
-                <el-input v-model="userInfor.sId" readonly></el-input>
+                <el-input v-model="userInfo.sId" readonly></el-input>
               </el-form-item>
               <el-form-item label="姓名" prop="name">
-                <el-input v-model="userInfor.name" placeholder="请输入您的姓名" clearable></el-input>
+                <el-input v-model="userInfo.name" placeholder="请输入您的姓名" clearable></el-input>
               </el-form-item>
               <el-form-item label="性别">
-                <el-radio-group v-model="userInfor.sex">
+                <el-radio-group v-model="userInfo.sex">
                   <el-radio label="男"></el-radio>
                   <el-radio label="女"></el-radio>
                 </el-radio-group>
               </el-form-item>
               <el-form-item label="年龄" prop="age">
-                <el-input v-model.number="userInfor.age" placeholder="请输入您的年龄" clearable></el-input>
+                <el-input v-model.number="userInfo.age" placeholder="请输入您的年龄" clearable></el-input>
               </el-form-item>
               <el-form-item>
                 <el-button type="primary" @click="StartExperiment('formUser')">开始实验</el-button>
@@ -50,7 +51,7 @@ export default {
   name: "UserDataCollect",
   data() {
     return {
-      userInfor: {
+      userInfo: {
         sId: '',
         sex: '男',
         name: '',
@@ -67,9 +68,15 @@ export default {
       },
     };
   },
+  beforeCreate() {
+    // 在该页面加载的时候就加载数据
+    this.$store.dispatch('readExperimentData', {
+      type: 2
+    });
+  },
   mounted() {
     // 自动生成编号
-    this.$set(this.userInfor, 'sId', getId());
+    this.$set(this.userInfo, 'sId', getId());
   },
   methods: {
     StartExperiment(fN) {
@@ -77,21 +84,7 @@ export default {
         if (valid) {
           this.isShow = false;
           // 将用户信息存储到会话缓存中
-          sessionStorage.setItem('userInfor', JSON.stringify(this.userInfor));
-          // 读取数据并将数据传递至第一个实验
-          this.$store.dispatch('readExperimentData', {
-            type: 1,
-            success: (d) => {
-              this.$bus.$emit('ExperimentAUpdate', d);
-            }
-          });
-          // 读取第二个实验的数据并传递至第二个实验
-          this.$store.dispatch('readExperimentData', {
-            type: 2,
-            success: (d) => {
-              this.$bus.$emit('ExperimentBUpdate', d);
-            }
-          });
+          sessionStorage.setItem('userInfo', JSON.stringify(this.userInfo));
           // 进入实验页面 app.vue里跳转到MainPage
           this.$bus.$emit('EnterExperiment');
         } else {

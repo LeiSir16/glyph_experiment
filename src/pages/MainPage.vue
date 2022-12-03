@@ -2,24 +2,36 @@
   <el-container>
     <el-main>
       <el-tabs v-model="activeTab" :before-leave="changeExperiment">
-        <el-tab-pane name="GlyphIntroduction">
-          <span slot="label" class="navigation">图形介绍</span>
+        <el-tab-pane name="ExperimentBGlyphIntroduction">
+          <span slot="label" class="navigation">实验一(可视化介绍)</span>
           <GlyphIntroduction/>
         </el-tab-pane>
         <el-tab-pane name="ExperimentBIntroduction">
-          <span slot="label" class="navigation">实验一介绍</span>
+          <span slot="label" class="navigation">实验一(实验介绍)</span>
           <ExperimentBIntroduction/>
         </el-tab-pane>
+        <el-tab-pane name="ExperimentBTraining">
+          <span slot="label" class="navigation">实验一(实验练习)</span>
+          <ExperimentBTraining/>
+        </el-tab-pane>
         <el-tab-pane name="ExperimentB">
-          <span slot="label" class="navigation">实验一</span>
+          <span slot="label" class="navigation">实验一(正式实验)</span>
           <ExperimentB :child-experiment-num="1"/>
         </el-tab-pane>
+        <el-tab-pane name="ExperimentCGlyphIntroduction">
+          <span slot="label" class="navigation">实验二(可视化介绍)</span>
+          实验二可视化介绍
+        </el-tab-pane>
         <el-tab-pane name="ExperimentCIntroduction">
-          <span slot="label" class="navigation">实验二介绍</span>
-          实验二介绍
+          <span slot="label" class="navigation">实验二(实验介绍)</span>
+          实验二可视化介绍
+        </el-tab-pane>
+        <el-tab-pane name="ExperimentCTraining">
+          <span slot="label" class="navigation">实验二(实验练习)</span>
+          实验二实验练习
         </el-tab-pane>
         <el-tab-pane name="ExperimentC">
-          <span slot="label" class="navigation">实验二</span>
+          <span slot="label" class="navigation">实验二(正式实验)</span>
           <ExperimentC/>
         </el-tab-pane>
         <el-tab-pane name="Test">
@@ -37,13 +49,14 @@ import Test from "@/pages/Test";
 import ExperimentC from "@/pages/ExperimentC";
 import GlyphIntroduction from "@/pages/GlyphIntroduction";
 import ExperimentBIntroduction from "@/pages/ExperimentBIntroduction";
+import ExperimentBTraining from "@/pages/ExperimentBTraining";
 
 export default {
   name: "MainPage",
-  components: {ExperimentBIntroduction, GlyphIntroduction, ExperimentC, Test, ExperimentB},
+  components: {ExperimentBTraining, ExperimentBIntroduction, GlyphIntroduction, ExperimentC, Test, ExperimentB},
   data() {
     return {
-      activeTab: 'GlyphIntroduction'
+      activeTab: 'ExperimentBTraining'
     };
   },
   mounted() {
@@ -61,6 +74,7 @@ export default {
     },
     changeExperiment(newVal, oldVal) {
       this.updateTime(newVal);
+      console.log(newVal)
       return true;
     }
   }

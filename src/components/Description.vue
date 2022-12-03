@@ -1,6 +1,7 @@
 <template>
   <!--如果是第一个实验-->
-  <div v-if="desCondition&&desCondition.experiment === 2" style="padding-bottom: 10px">
+  <div v-if="desCondition&&(desCondition.experiment === 2||desCondition.experiment === -2)"
+       style="padding-bottom: 10px">
     <!--如果是peaglyph-->
     <template v-if="desCondition.glyph === 1">
       <el-row>
@@ -48,7 +49,8 @@
       </el-row>
       <el-row>
         <el-col :span="23" :offset="1" class="text">
-          每个扇形区域的<span class="under_line">灰色半透明条纹</span>表达了该区域<span class="under_line">容纳的条纹上限</span>
+          每个扇形区域的<span class="under_line">灰色半透明条纹</span>表达了该区域<span
+            class="under_line">容纳的条纹上限</span>
         </el-col>
       </el-row>
     </template>

@@ -6,6 +6,7 @@
           <el-image
               style="width: 1400px; height: auto"
               :src="curUrl"
+              :preview-src-list="urls"
               fit="cover">
           </el-image>
         </el-col>

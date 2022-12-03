@@ -31,14 +31,14 @@ const actions = {
                             ExperimentB_20: formatSSIData(response.data[dataName].ExperimentB_20),
                             ExperimentB_40: formatSSIData(response.data[dataName].ExperimentB_40),
                         }
+                        // console.log(d.Demo)
                         break;
                     case 3:
                         break
                 }
                 let result = {
                     ExperimentData: d, Type: data.type
-                }
-                data.success(result);
+                };
                 // 提交给mutations存储
                 context.commit('ReadExperimentData', result);
             },

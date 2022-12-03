@@ -254,6 +254,8 @@ export default {
       tops = 'ExperimentA';
     } else if (this.experiment.experiment === 2) {
       tops = 'ExperimentB';
+    } else if (this.experiment.experiment === -2) {
+      tops = 'ExperimentBTraining';
     }
     this.svgID = tops + '_' + this.title_id + '_' + this.glyph_data.data.city.split(' ').join('_') + "_" + nanoid();
   },

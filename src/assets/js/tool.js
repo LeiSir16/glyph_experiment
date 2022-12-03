@@ -307,7 +307,7 @@ export function saveAsJson(data, experiment, success) {
         let infor = JSON.parse(sessionStorage.getItem('userInfor'));
         name = infor.name;
         let result = {
-            userInfor: infor,
+            userInfo: infor,
             [e]: data
         }
         let prefix = infor.sId;

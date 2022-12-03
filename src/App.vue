@@ -45,4 +45,32 @@ export default {
   font-weight: 1000;
 }
 
+.B_legend {
+  border: 3px solid black;
+  border-radius: 5px 5px 0 0;
+}
+
+.B_description {
+  border-left: 3px solid black;
+  border-right: 3px solid black;
+}
+
+.B_task {
+  border: 3px solid black;
+  border-radius: 0 0 5px 5px;
+}
+
+.color_title {
+  font-size: x-large;
+  font-weight: bolder;
+  margin: 8px 0;
+}
+
+.bianhao {
+  text-align: center;
+  padding-left: 8%;
+  padding-top: 1%;
+  font-family: "Gotham Black", serif;
+  font-size: xxx-large;
+}
 </style>

@@ -23,6 +23,12 @@
               <el-form-item label="姓名" prop="name">
                 <el-input v-model="userInfor.name" placeholder="请输入您的姓名" clearable></el-input>
               </el-form-item>
+              <el-form-item label="性别">
+                <el-radio-group v-model="userInfor.sex">
+                  <el-radio label="男"></el-radio>
+                  <el-radio label="女"></el-radio>
+                </el-radio-group>
+              </el-form-item>
               <el-form-item label="年龄" prop="age">
                 <el-input v-model.number="userInfor.age" placeholder="请输入您的年龄" clearable></el-input>
               </el-form-item>
@@ -46,8 +52,9 @@ export default {
     return {
       userInfor: {
         sId: '',
+        sex: '男',
         name: '',
-        age: 0
+        age: 23
       },
       rules: {
         name: [

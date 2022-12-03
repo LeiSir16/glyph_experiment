@@ -16,7 +16,20 @@ import {
     Divider,
     Button,
     Tabs,
-    TabPane, Aside, Steps, Step, Input, Form, FormItem, MessageBox, Message, Slider, InputNumber, Image
+    TabPane,
+    Aside,
+    Steps,
+    Step,
+    Input,
+    Form,
+    FormItem,
+    MessageBox,
+    Message,
+    Slider,
+    InputNumber,
+    Image,
+    Radio,
+    RadioGroup
 } from "element-ui";
 
 Vue.config.productionTip = false
@@ -42,7 +55,9 @@ Vue.use(FormItem);
 Vue.use(Form);
 Vue.use(Slider);
 Vue.use(InputNumber);
-Vue.use(Image)
+Vue.use(Image);
+Vue.use(RadioGroup);
+Vue.use(Radio)
 new Vue({
     render: h => h(App),
     router,

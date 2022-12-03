@@ -23,7 +23,7 @@
           <el-row style="margin-top: 3%">
             <!-- key一定要保证唯一，不然可能会出现两个Glyph一个更新一个没更新-->
             <el-col :span="Math.floor(22/glyphData.length)" v-for="(city,index) in glyphData" :key="city.id"
-                    :offset="index===0?1:0">
+                    :offset="index===0?1:0" style="text-align: center">
               <template v-if="curShowGlyph === 1">
                 <!-- 这里的type表示数据类型，1是ssi数据，2是秦岭数据-->
                 <PeaGlyph :glyph_data="{type:1,data:city}"
@@ -39,9 +39,7 @@
           </el-row>
           <el-row>
             <!-- key一定要保证唯一，不然可能会出现两个Glyph一个更新一个没更新-->
-            <el-col :span="Math.floor(22/glyphData.length)" v-for="(city,index) in glyphData" :key="city.id"
-                    style="text-align: center"
-                    class="bianhao">
+            <el-col :span="Math.floor(22/glyphData.length)" v-for="(city,index) in glyphData" :key="city.id" class="bianhao">
               {{ String.fromCharCode(index + 65) }}
             </el-col>
           </el-row>
@@ -490,7 +488,7 @@ export default {
 
 .bianhao {
   text-align: center;
-  padding-left: 5%;
+  padding-left: 8%;
   padding-top: 1%;
   font-family: "Gotham Black", serif;
   font-size: xxx-large;

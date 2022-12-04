@@ -6,10 +6,6 @@
           <span slot="label" class="navigation">实验一(可视化介绍)</span>
           <GlyphIntroduction/>
         </el-tab-pane>
-        <el-tab-pane name="ExperimentBIntroduction">
-          <span slot="label" class="navigation">实验一(实验介绍)</span>
-          <ExperimentBIntroduction/>
-        </el-tab-pane>
         <el-tab-pane name="ExperimentBTraining">
           <span slot="label" class="navigation">实验一(实验练习)</span>
           <ExperimentBTraining/>

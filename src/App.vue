@@ -73,4 +73,8 @@ export default {
   font-family: "Gotham Black", serif;
   font-size: xxx-large;
 }
+
+.put_center {
+  text-align: center;
+}
 </style>

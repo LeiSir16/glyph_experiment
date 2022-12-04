@@ -29,7 +29,7 @@ import {
     InputNumber,
     Image,
     Radio,
-    RadioGroup
+    RadioGroup, Notification
 } from "element-ui";
 
 Vue.config.productionTip = false
@@ -67,5 +67,6 @@ new Vue({
         Vue.prototype.$bus = this;
         Vue.prototype.$confirm = MessageBox.confirm;
         Vue.prototype.$message = Message;
+        Vue.prototype.$notify = Notification;
     }
 }).$mount('#app')

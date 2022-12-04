@@ -303,14 +303,14 @@ export function saveAsJson(data, experiment, success) {
     // 标明实验
     let e = curExperiment(experiment);
     let name = 'noName';
-    if (sessionStorage.getItem('userInfor')) {
-        let infor = JSON.parse(sessionStorage.getItem('userInfor'));
-        name = infor.name;
+    if (sessionStorage.getItem('userInfo')) {
+        let info = JSON.parse(sessionStorage.getItem('userInfo'));
+        name = info.name;
         let result = {
-            userInfo: infor,
+            userInfo: info,
             [e]: data
         }
-        let prefix = infor.sId;
+        let prefix = info.sId;
         let blob = new Blob([JSON.stringify(result)], {type: "application/json"});
         let fileName = prefix + "-" + e + "-" + name + ".json";
         saveAs(blob, fileName);

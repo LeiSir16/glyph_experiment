@@ -4,22 +4,6 @@
       <!--glyph显示区域-->
       <el-row>
         <el-col :span="19">
-          <template v-if="isDemo">
-            <!--demo界面-->
-            <el-row type="flex" align="middle">
-              <el-col :span="8" :offset="11">
-                <h2>实验示例</h2>
-              </el-col>
-            </el-row>
-          </template>
-          <template v-else>
-            <!--正式实验界面-->
-            <el-row type="flex" align="middle">
-              <el-col :span="8" :offset="11">
-                <h2>正式实验</h2>
-              </el-col>
-            </el-row>
-          </template>
           <el-row style="margin-top: 3%">
             <!-- key一定要保证唯一，不然可能会出现两个Glyph一个更新一个没更新-->
             <el-col :span="Math.floor(22/glyphData.length)" v-for="(city,index) in glyphData" :key="city.id"
@@ -39,55 +23,47 @@
           </el-row>
           <el-row>
             <!-- key一定要保证唯一，不然可能会出现两个Glyph一个更新一个没更新-->
-            <el-col :span="Math.floor(22/glyphData.length)" v-for="(city,index) in glyphData" :key="city.id" class="bianhao">
+            <el-col :span="Math.floor(22/glyphData.length)" v-for="(city,index) in glyphData" :key="city.id"
+                    class="bianhao">
               {{ String.fromCharCode(index + 65) }}
             </el-col>
           </el-row>
-          <template v-if="isDemo">
-            <!--demo界面允许重复测试-->
-            <el-row type="flex" align="middle" style="margin-top: 3%">
-              <el-col :span="8" :offset="11">
-                <el-button plain icon="el-icon-refresh-left" class="title under_line" @click="resetGlyph">重置示例
-                </el-button>
-              </el-col>
-            </el-row>
-          </template>
         </el-col>
         <el-col :span="5">
           <!--颜色图例部分-->
           <el-row class="B_legend">
-            <el-row type="flex" align="middle">
-              <el-col :span="19" :offset="9">
+            <el-row>
+              <el-col :span="24" class="put_center">
                 <div class="title color_title">颜色图例</div>
               </el-col>
             </el-row>
-            <el-row type="flex" align="middle">
-              <el-col :span="23" :offset="7">
+            <el-row>
+              <el-col :span="18" :offset="6">
                 <ColorLegend/>
               </el-col>
             </el-row>
           </el-row>
           <!-- 详细阐述部分-->
           <el-row class="B_description">
-            <el-row type="flex" align="middle">
-              <el-col :span="19" :offset="9">
+            <el-row>
+              <el-col :span="24" class="put_center">
                 <div class="title color_title">可视化解释</div>
               </el-col>
             </el-row>
-            <el-row type="flex" align="middle">
-              <el-col :span="24">
+            <el-row>
+              <el-col :span="23" :offset="1">
                 <Description :des-condition="descriptionCondition"/>
               </el-col>
             </el-row>
           </el-row>
           <!--任务部分-->
           <el-row class="B_task">
-            <el-row type="flex" align="middle">
-              <el-col :span="19" :offset="9">
+            <el-row>
+              <el-col :span="24" class="put_center">
                 <div class="title color_title">实验任务</div>
               </el-col>
             </el-row>
-            <el-row type="flex" align="middle">
+            <el-row>
               <el-col :span="24">
                 <Task :task-condition="taskCondition"/>
               </el-col>
@@ -120,21 +96,21 @@ export default {
       curShowGlyph: 1,
       // 当前进行的实验
       curExperiment: {},
-      // 每个小实验的次数
-      // childExperimentNum: 0,
       // 每个小实验的圆圈的数量
       circleNum: [10, 20, 40],
       // glyph的类型，1 peaGlyph，2 stripeGlyph
       glyphType: [1, 2],
       glyphData: [],
+      // 标志首先是做哪一个Glyph实验
+      randomFlag: 0,
+      // 所要进行的实验类型
+      experimentType: [],
       descriptionCondition: {
         experiment: 2,
         glyph: 1,
         value: 0.5,
-        max: 20
+        max: 10
       },
-      // 所要进行的实验类型
-      experimentType: [],
       peaGlyphCondition: {
         circleNum: 20,
         circleValue: 0.5,
@@ -170,7 +146,7 @@ export default {
         stripe_thickness: 0.07,
         encoding_value: 0.5,
       },
-      // 实验记录的数据
+      // 实验一记录的数据
       experimentBUserData: {
         startTime: '',
         endTime: '',
@@ -190,17 +166,19 @@ export default {
     }
   },
   methods: {
-    // 根据实验条件切换布局
+    /**
+     * 根据实验切换布局
+     * @param glyph           glyph类型
+     * @param childExperiment 哪一种实验 10 20 40
+     */
     changeLayerOut(glyph, childExperiment) {
-      let maxValue = 10;
+      let maxValue = this.$store.state.default_max_radius;
       let circleValue = 0;
       if (glyph === 1) {
         circleValue = maxValue / childExperiment;
         this.$set(this.peaGlyphCondition, 'circleNum', childExperiment);
         this.$set(this.peaGlyphCondition, 'circleValue', circleValue);
-        // 描述界面参数
-        this.$set(this.descriptionCondition, 'max', childExperiment);
-        this.$set(this.descriptionCondition, 'value', circleValue);
+
         if (childExperiment === 10) {
           this.$set(this.peaGlyphCondition, 'centerDis', 12);
         } else if (childExperiment === 20) {
@@ -227,29 +205,32 @@ export default {
           this.$set(this.stripeGlyphCondition, 'stripe_L_R', 0.1);
         }
         this.$set(this.stripeGlyphCondition, 'encoding_value', maxValue / childExperiment);
-
-        this.$set(this.descriptionCondition, 'max', childExperiment);
-        this.$set(this.descriptionCondition, 'value', maxValue / childExperiment);
       }
 
       // 记录下该实验中小球/条纹的数量以及每个小球/条纹的值
       this.stripeNum = childExperiment;
       this.stripeValue = maxValue / childExperiment;
-
-      // 设置任务界面参数
-      this.$set(this.descriptionCondition, 'glyph', glyph);
+      this.$set(this.descriptionCondition, 'value', maxValue / childExperiment);
+      this.$set(this.descriptionCondition, 'max', childExperiment);
     },
-    // 判断某种Glyph的实验是否全部完成
+    /**
+     * 判断某种glyph的实验是否全部完成
+     * @param glyph       glyph类型
+     * @returns {boolean} 是否完成
+     */
     isCompleteExperiment(glyph) {
       let num = 0;
       this.experimentType.forEach((e, index) => {
-        if (glyph === e.glyph && !e.isDemo) {
+        if (glyph === e.glyph) {
           num += e.cur_num;
         }
       });
       return num === this.circleNum.length * this.childExperimentNum;
     },
-    // 随机选择一种实验
+    /**
+     * 从初始化的实验数组中随机选择一个实验
+     * @returns {{isFind: boolean}|{isFind: boolean, item: *, index: number}}
+     */
     randomChooseExperiment() {
       if (this.isCompleteExperiment(this.curShowGlyph)) {
         return {
@@ -260,7 +241,7 @@ export default {
         while (flag) {
           let index = Math.floor(Math.random() * this.experimentType.length);
           let item = this.experimentType[index];
-          if (item.glyph === this.curShowGlyph && item.max_num !== item.cur_num && !item.isDemo) {
+          if (item.glyph === this.curShowGlyph && item.max_num !== item.cur_num) {
             flag = false;
             return {
               isFind: true,
@@ -271,7 +252,12 @@ export default {
         }
       }
     },
-    // 随机选择两个数据
+    /**
+     * 从指定数据字段中选择数据
+     * @param num     选择数据的数量
+     * @param d       指定的数据字段
+     * @returns {*[]} 数据数组
+     */
     randomChooseData(num, d) {
       let result = [];
       let tmp = d;
@@ -310,57 +296,85 @@ export default {
         countryInfo: this.differenceCity,
         findAttr: this.findAttr
       });
+    },
+    curActiveChange(active) {
+      let d = this.$store.state.ExperimentBData;
+      // 前半部分是peaGlyph 后半部分是stripeGlyph的实验
+      if (this.randomFlag < 0.5) {
+        if (active < this.circleNum.length * this.childExperimentNum) {
+          this.curShowGlyph = 1;
+        } else {
+          this.curShowGlyph = 2;
+        }
+      } else {
+        if (active < this.circleNum.length * this.childExperimentNum) {
+          this.curShowGlyph = 2;
+        } else {
+          this.curShowGlyph = 1;
+        }
+      }
+      this.$set(this.descriptionCondition, 'glyph', this.curShowGlyph);
+      this.storageGlyph = this.curShowGlyph;
+      if (active !== 0) {
+        // 记录小实验开始的时间
+        this.startTime = getCurrentTime();
+      }
+      // 准备数据
+      this.glyphData = this.randomChooseData(2, d.ExperimentB_10);
+      // 准备实验
+      this.curExperiment = this.randomChooseExperiment();
+      if (this.curExperiment.isFind) {
+        let tmp = this.experimentType[this.curExperiment.index].cur_num;
+        this.$set(this.experimentType[this.curExperiment.index], 'cur_num', tmp + 1);
+        // 根据实验内容切换布局
+        this.changeLayerOut(this.curExperiment.item.glyph, this.curExperiment.item.child_experiment);
+      }
     }
   },
-  beforeMount() {
+  created() {
     // 初始化实验数据
     this.glyphType.forEach((glyph, index) => {
-      // 将demo加入到实验列表
-      this.experimentType.push({
-        isDemo: true,
-        glyph: glyph,
-        child_experiment: 10,
-        max_num: 1,
-        cur_num: 0
-      });
       this.circleNum.forEach((type, i) => {
         let e = {
-          isDemo: false,
+          // glyph类型
           glyph: glyph,
+          // 实验类型 10 20 40
           child_experiment: type,
+          // 该组实验最大数量
           max_num: this.childExperimentNum,
+          // 当前已经进行了几次
           cur_num: 0
         }
         this.experimentType.push(e);
       });
     });
+    this.randomFlag = Math.random();
+    // 刚开始初始化界面数据
+    this.curActiveChange(this.curActive);
   },
   mounted() {
-    // 接收登录页面接收过来的数据
-    this.$bus.$on('ExperimentBUpdate', (d) => {
-      let b_d = d.ExperimentData;
-      if (this.isDemo) {
-        this.glyphData = b_d.Demo;
-        // demo页面默认是10个
-        this.changeLayerOut(this.curShowGlyph, 10);
-      } else {
-        this.glyphData = this.randomChooseData(2, b_d.ExperimentB_10);
-      }
-    });
     // 记录下整个大实验开始时间
     this.$bus.$on('saveBStartTime', () => {
       this.$set(this.experimentBUserData, 'startTime', getCurrentTime());
+      this.startTime = getCurrentTime();
     });
     // 小页面切换事件
     this.$bus.$on('nextSmallExperimentBPage', () => {
-      if (this.curActive <= this.childExperimentNum * this.circleNum.length * this.glyphType.length) {
-        if (!this.isDemo) {
-          // 记录当前实验的结束时间
-          this.endTime = getCurrentTime();
-          // 到此记录结束，将其存到整个实验的数据中
-          this.storeCurrentExperiment();
-        }
+      if (this.curActive < this.childExperimentNum * this.circleNum.length * this.glyphType.length - 1) {
+        // 记录当前实验的结束时间
+        this.endTime = getCurrentTime();
+        // 到此记录结束，将其存到整个实验的数据中
+        this.storeCurrentExperiment();
         this.curActive++;
+        if (this.curActive === this.childExperimentNum * this.circleNum.length) {
+          let m = this.curShowGlyph === 1 ? 'PeaGlyph实验已完成！' : 'StripeGlyph实验已完成!';
+          this.$notify({
+            title: '提示',
+            message: m,
+            type: 'success',
+            duration: 2000
+          });
+        }
       }
     });
     // 提交结果
@@ -377,7 +391,8 @@ export default {
         saveAsJson(JSON.parse(sessionStorage.getItem('ExperimentB')), 1, () => {
           this.$message({
             message: '感谢您的参与，数据已保存成功!',
-            type: 'success'
+            type: 'success',
+            duration: 1000
           });
         });
       } else {
@@ -402,7 +417,8 @@ export default {
         this.findAttr = result.attr;
         this.$message({
           message: '保存成功!',
-          type: 'success'
+          type: 'success',
+          duration: 1000,
         });
         this.$bus.$emit('enableNextStep');
       }).catch(() => {
@@ -413,53 +429,23 @@ export default {
   watch: {
     // 实验变化时的事件
     curActive: {
-      immediate: true,
-      handler(newVal) {
-        let d = this.$store.state.ExperimentBData;
-        // 前半部分是peaGlyph 后半部分是stripeGlyph的实验
-        if (newVal <= this.circleNum.length * this.childExperimentNum) {
-          this.curShowGlyph = 1;
-        } else {
-          this.curShowGlyph = 2;
-        }
-        // 记录当前实验的Glyph类型
-        this.storageGlyph = this.curShowGlyph;
-        // 根据是否是demo选择两个数据
-        if (this.isDemo) {
-          this.glyphData = d.Demo;
-          this.changeLayerOut(this.curShowGlyph, 10);
-        } else {
-          // 记录下当前小实验开始的时间
-          this.startTime = getCurrentTime();
-          this.glyphData = this.randomChooseData(2, d.ExperimentB_10);
-          // 随机选择一个实验
-          this.curExperiment = this.randomChooseExperiment();
-          if (this.curExperiment.isFind) {
-            let tmp = this.experimentType[this.curExperiment.index].cur_num;
-            this.$set(this.experimentType[this.curExperiment.index], 'cur_num', tmp + 1);
-            // 根据实验内容切换布局
-            this.changeLayerOut(this.curExperiment.item.glyph, this.curExperiment.item.child_experiment);
-          }
-        }
+      handler(newVal, oldVal) {
+        this.curActiveChange(newVal);
       }
     }
   },
   computed: {
-    // 是否是Demo
-    isDemo() {
-      return this.curActive === 0 || this.curActive === this.circleNum.length * this.childExperimentNum + 1;
-    },
     taskCondition() {
       return {
         experiment: 2,
-        isDemo: this.isDemo,
+        isDemo: false,
         active: this.curActive,
         singleExperiment: this.circleNum.length * this.childExperimentNum,
         data: this.glyphData,
         // 每个单位编码的值
         circleValue: this.curShowGlyph === 1 ? this.peaGlyphCondition.circleValue : this.stripeGlyphCondition.encoding_value
       }
-    },
+    }
   }
 }
 </script>

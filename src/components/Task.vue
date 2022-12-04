@@ -13,7 +13,7 @@
         <el-col :span="23" :offset="1">
           <span class="under_line">说明：</span>请在下方输入或长按+/-提交您估算的结果(小数点后两位)，<span
             class="under_line">并点击【保存结果】按钮保存</span>。保存后即可点击<span
-            v-show="isNext">下一步按钮进行后续实验</span><span v-show="!isNext">提交结果按钮导出结果</span>
+            v-show="isNext">【下一步】按钮进行后续实验</span><span v-show="!isNext">提交结果按钮导出结果</span>
         </el-col>
       </el-row>
       <el-row type="flex" align="middle" class="text under_line">
@@ -149,7 +149,12 @@ export default {
             this.isNext = true;
           }
           // 当进入到一个新的小实验时要禁用下一步按钮并将数值选择框的值归零
-          if (newVal.active !== oldVal.active) {
+          if (oldVal) {
+            if (newVal.active !== oldVal.active) {
+              this.isSave = false;
+              this.differenceSlider = 0;
+            }
+          } else {
             this.isSave = false;
             this.differenceSlider = 0;
           }

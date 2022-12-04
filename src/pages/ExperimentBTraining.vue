@@ -69,12 +69,12 @@
           </el-row>
           <!--任务部分-->
           <el-row class="B_task">
-            <el-row type="flex" align="middle">
-              <el-col :span="19" :offset="9">
+            <el-row>
+              <el-col :span="24" class="put_center">
                 <div class="title color_title">实验任务</div>
               </el-col>
             </el-row>
-            <el-row type="flex" align="middle">
+            <el-row>
               <el-col :span="24">
                 <Task :task-condition="taskCondition"/>
               </el-col>
@@ -229,7 +229,4 @@ export default {
 </script>
 
 <style scoped>
-.put_center {
-  text-align: center;
-}
 </style>

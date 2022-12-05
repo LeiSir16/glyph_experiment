@@ -182,6 +182,53 @@ const state = {
             color: "#f781bf"
         }
     ],
+    qinlingColorEncoding: [
+        {
+            id: 0,
+            name: 'tem',
+            color: "#e41a1c"
+        },
+        {
+            id: 1,
+            name: 'wns',
+            color: "#377eb8"
+        },
+        {
+            id: 2,
+            name: 'wns_100m',
+            color: "#bf66eb"
+        },
+        {
+            id: 3,
+            name: 'vis',
+            color: "#4daf4a"
+        },
+        {
+            id: 4,
+            name: 'gust',
+            color: "#984ea3"
+        },
+        {
+            id: 5,
+            name: 'st_40',
+            color: "#ff7f00"
+        },
+        {
+            id: 6,
+            name: 'st_200',
+            color: "#fdbf6f"
+        },
+        {
+            id: 7,
+            name: 'sw_40',
+            color: "#a65628"
+        },
+        {
+            id: 8,
+            name: 'sw_200',
+            color: "#f781bf"
+        }
+    ],
     ssiColorName: {
         Sufficient_Food: '营养不良指数',
         Sufficient_Drinking_Water: '基础供水服务指数',

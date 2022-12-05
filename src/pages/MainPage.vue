@@ -52,7 +52,7 @@ export default {
   components: {ExperimentBTraining, ExperimentBIntroduction, GlyphIntroduction, ExperimentC, Test, ExperimentB},
   data() {
     return {
-      activeTab: 'ExperimentBGlyphIntroduction'
+      activeTab: 'ExperimentC'
     };
   },
   mounted() {

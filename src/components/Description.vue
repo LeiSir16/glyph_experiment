@@ -49,8 +49,7 @@
       </el-row>
       <el-row>
         <el-col :span="23" :offset="1" class="text">
-          每个扇形区域的<span class="under_line">灰色半透明条纹</span>表达了该区域<span
-            class="under_line">容纳的条纹上限</span>
+          每个扇形区域的<span class="under_line">灰色半透明条纹段</span>和彩色条纹段的数量之和表达了该扇形区域所能编码条纹段的最大值
         </el-col>
       </el-row>
     </template>

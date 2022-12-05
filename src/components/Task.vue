@@ -132,7 +132,14 @@ export default {
       this.experimentBChoose = this.randomShowAttributes(this.taskCondition);
     });
     this.$bus.$on('enableNextStep', () => {
-      this.isSave = true;
+      if (this.taskCondition && this.taskCondition.experiment === 2) {
+        this.isSave = true;
+      }
+    });
+    this.$bus.$on('enableNextStepExperimentBTraining', () => {
+      if (this.taskCondition && this.taskCondition.experiment === -2) {
+        this.isSave = true;
+      }
     });
   },
   watch: {

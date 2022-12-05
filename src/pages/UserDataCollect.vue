@@ -73,6 +73,8 @@ export default {
     this.$store.dispatch('readExperimentData', {
       type: 2
     });
+    this.$store.dispatch('readExperimentQinLingData', 1);
+    this.$store.dispatch('readExperimentQinLingData', 2);
   },
   mounted() {
     // 自动生成编号

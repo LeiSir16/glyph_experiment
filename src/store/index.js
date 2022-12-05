@@ -46,6 +46,25 @@ const actions = {
                 console.log('数据加载失败！');
             }
         );
+    },
+    // 读取秦岭数据
+    readExperimentQinLingData(context, type) {
+        let path = '';
+        if (type === 1) {
+            // 读取demo数据
+            path = '/data/qinling/weather_0.json';
+        } else {
+            // 读取正式实验数据
+            path = '/data/qinling/weather_120.json';
+        }
+        axios.get(path).then(response => {
+            context.commit('ReadExperimentQinLingData', {
+                type: type,
+                data: response.data.data
+            });
+        }, error => {
+            console.log('秦岭数据加载失败');
+        });
     }
 };
 // 创建mutation—操作state中的数据
@@ -62,6 +81,17 @@ const mutations = {
             case 3:
                 break
         }
+    },
+    ReadExperimentQinLingData(state, data) {
+        switch (data.type) {
+            case 1:
+                state.ExperimentCDemo = data.data;
+                break;
+            case 2:
+                state.ExperimentCForm = data.data;
+                break;
+        }
+        console.log(state.ExperimentCDemo);
     }
 };
 const getters = {}
@@ -165,7 +195,9 @@ const state = {
     },
     ExperimentAData: {},
     ExperimentBData: {},
-    Test: []
+    Test: [],
+    ExperimentCDemo: [],
+    ExperimentCForm: []
 }
 
 // 创建store

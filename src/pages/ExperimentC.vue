@@ -1,7 +1,7 @@
 <template>
   <el-container>
     <el-main>
-
+      <qinling-map/>
     </el-main>
   </el-container>
 </template>
@@ -11,14 +11,13 @@
 import Task from "@/components/Task";
 import Description from "@/components/Description";
 import ColorLegend from "@/components/ColorLegend";
+import QinlingMap from "@/components/QinlingMap";
 
 export default {
   name: "ExperimentC",
-  components: {Task, Description, ColorLegend},
+  components: {QinlingMap, Task, Description, ColorLegend},
   data() {
-    return {
-
-    }
+    return {}
   },
   mounted() {
 

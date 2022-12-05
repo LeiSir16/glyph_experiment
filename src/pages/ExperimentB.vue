@@ -276,11 +276,6 @@ export default {
       }
       return result;
     },
-    // 重置示例页面
-    resetGlyph() {
-      // 任务栏重置滑条值
-      this.$bus.$emit('resetValue');
-    },
     // 将当前实验信息存储到整个实验内容里
     storeCurrentExperiment() {
       this.experimentBUserData.childExperiment.push({

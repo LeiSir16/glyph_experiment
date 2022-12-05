@@ -28,6 +28,14 @@
               {{ String.fromCharCode(index + 65) }}
             </el-col>
           </el-row>
+          <el-row>
+            <el-col :span="2" :offset="9" v-show="isEnd">
+              <el-button type="primary" icon="el-icon-refresh-left" @click="resetTraining">重新练习</el-button>
+            </el-col>
+            <el-col :span="2" :offset="isEnd ? 2 : 11">
+              <el-button icon="el-icon-refresh-left" @click="resetCurrentExperiment">重置实验</el-button>
+            </el-col>
+          </el-row>
         </el-col>
         <el-col :span="5">
           <!--颜色图例部分-->
@@ -255,11 +263,6 @@ export default {
       }
       return result;
     },
-    // 重置示例页面
-    resetGlyph() {
-      // 任务栏重置滑条值
-      this.$bus.$emit('resetValue');
-    },
     curActiveChange(active) {
       let d = this.$store.state.ExperimentBData;
       // 前半部分是peaGlyph 后半部分是stripeGlyph的实验
@@ -287,6 +290,19 @@ export default {
         // 根据实验内容切换布局
         this.changeLayerOut(this.curExperiment.item.glyph, this.curExperiment.item.child_experiment);
       }
+    },
+    // 重置当前这个小实验
+    resetCurrentExperiment() {
+      // 重置任务界面
+      this.$bus.$emit('resetValue');
+      // 重置glyph的数据
+      this.glyphData = this.randomChooseData(2, this.$store.state.ExperimentBData.ExperimentB_40);
+      this.changeLayerOut(this.curExperiment.item.glyph, this.curExperiment.item.child_experiment);
+    },
+    // 重新训练
+    resetTraining() {
+      this.curActive = 0;
+      this.randomFlag = Math.random();
     }
   },
   created() {
@@ -335,6 +351,7 @@ export default {
       });
     });
 
+    // 保存结果
     this.$bus.$on('experimentBTrainingSubmit', () => {
       this.$confirm('是否确定保存您的估算结果?', '提示', {
         confirmButtonText: '确定',
@@ -371,6 +388,9 @@ export default {
         // 每个单位编码的值
         circleValue: this.curShowGlyph === 1 ? this.peaGlyphCondition.circleValue : this.stripeGlyphCondition.encoding_value
       }
+    },
+    isEnd() {
+      return this.curActive === this.childExperimentNum * this.circleNum.length * this.glyphData.length - 1;
     }
   }
 }

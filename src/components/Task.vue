@@ -86,6 +86,12 @@ export default {
           attr.push(item.name);
         }
       });
+      // 如果没有筛选出来属性就把全部数据放里边
+      if (!attr.length) {
+        d_1.forEach((item, index) => {
+          attr.push(item.name);
+        });
+      }
       return attr;
     },
     // 查找数据中某个属性的值
@@ -128,8 +134,14 @@ export default {
   mounted() {
     this.$bus.$on('resetValue', () => {
       // 重置示例同时也再随机生成一种属性
-      this.differenceSlider = 0;
-      this.experimentBChoose = this.randomShowAttributes(this.taskCondition);
+      if (this.taskCondition && this.taskCondition.experiment === -2) {
+        this.differenceSlider = 0;
+        this.experimentBChoose = this.randomShowAttributes(this.taskCondition);
+        // 重置之后按钮禁用
+        if (this.isSave === true) {
+          this.isSave = false;
+        }
+      }
     });
     this.$bus.$on('enableNextStep', () => {
       if (this.taskCondition && this.taskCondition.experiment === 2) {

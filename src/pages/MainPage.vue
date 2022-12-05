@@ -12,7 +12,7 @@
         </el-tab-pane>
         <el-tab-pane name="ExperimentB">
           <span slot="label" class="navigation">实验一(正式实验)</span>
-          <ExperimentB :child-experiment-num="6"/>
+          <ExperimentB :child-experiment-num="1"/>
         </el-tab-pane>
         <el-tab-pane name="ExperimentCGlyphIntroduction">
           <span slot="label" class="navigation">实验二(可视化介绍)</span>
@@ -70,7 +70,6 @@ export default {
     },
     changeExperiment(newVal, oldVal) {
       this.updateTime(newVal);
-      console.log(newVal)
       return true;
     }
   }

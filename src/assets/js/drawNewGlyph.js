@@ -205,7 +205,7 @@ export function drawPeaGlyph(svgs, condition, data, position, qinlingcolor) {
             let id_name = d3.select(this.previousSibling).select("clipPath").attr("id");
             return "url(#" + id_name + ")";
         });
-    console.log(glyph_attr)
+    // console.log(glyph_attr)
     let showText = createAttrDetail(peaGlyph, uniformId, '');
     glyph_attr.on('mouseover', function (e) {
         e.stopPropagation();
@@ -605,7 +605,7 @@ function createAttrDetail(svgs, id, data) {
     let name = 'attrDetail' + "_" + id;
     let details = svgs.append('g')
         .attr('class', name)
-        .style('position', 'relative')
+        .style('position', 'static')
         .style('z-index', 999);
     let attrValue = details.append('text')
         .text(data.value)

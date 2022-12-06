@@ -73,7 +73,8 @@ export default {
       curActive: 0,
       showGlyph: {
         glyph: 2,
-        regionNum: 9
+        regionNum: 9,
+        isDemo: true
       }
     }
   },

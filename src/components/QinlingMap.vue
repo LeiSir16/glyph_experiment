@@ -13,7 +13,6 @@ export default {
   name: "QinlingMap",
   data() {
     return {
-      glyphData: this.$store.state.ExperimentCForm[0],
       mapSize: [
         1450, 780
       ],
@@ -70,7 +69,7 @@ export default {
         // 先随机选一个区域数据放进去
         let index = Math.floor(Math.random() * this.features.length);
         let region = this.features[index].properties.省C[0];
-        let data = this.$store.state.ExperimentCForm[region];
+        let data = this.glyphData[region];
         let centerPosition = this.path.centroid(this.features[index]);
         let regionInfo = {
           centerPosition: centerPosition,
@@ -84,7 +83,7 @@ export default {
           for (let i = 0; i < tryNum; i++) {
             index = Math.floor(Math.random() * this.features.length);
             region = this.features[index].properties.省C[0];
-            data = this.$store.state.ExperimentCForm[region];
+            data = this.glyphData[region];
             centerPosition = this.path.centroid(this.features[index]);
             regionInfo = {
               centerPosition: centerPosition,
@@ -178,7 +177,15 @@ export default {
       deep: true,
       handler(newVal, oldVal) {
         this.createGlyph(newVal);
-
+      }
+    }
+  },
+  computed: {
+    glyphData() {
+      if (this.updateData.isDemo) {
+        return this.$store.state.ExperimentCDemo;
+      } else {
+        return this.$store.state.ExperimentCForm;
       }
     }
   }

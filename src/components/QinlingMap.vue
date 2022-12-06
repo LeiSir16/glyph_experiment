@@ -6,7 +6,7 @@
 
 <script>
 import qinling from '@/assets/js/qinling';
-import {drawPeaGlyph} from "@/assets/js/drawNewGlyph";
+import {drawPeaGlyph, drawStripeGlyph} from "@/assets/js/drawNewGlyph";
 import * as d3 from 'd3';
 
 export default {
@@ -26,9 +26,33 @@ export default {
         outline_dis: 10,
         center_offset: 4,
         thickness: 0.5
-      }
+      },
+      stripeGlyphCondition: {
+        size: 180,
+        iRadius: 3,
+        maxRadius: 10,
+        sectorInterval: 1.5,
+        svgEdgeDis: 0,
+        outlineThickness: 1,
+        divisionColor: 'white',
+        divisionOpacity: 1,
+        bgOpacity: 0,
+        innerOpacity: 1,
+        stripe_L_R: .12,
+        stripe_B_A: .08,
+        stripeProportion: .117,
+        layerNum: 4,
+        metaphorColor: '#C0C0C0',
+        metaphorOpacity: 1,
+        encodingValue: 2,
+        isEncodingInfor: true,
+        encodingInforColor: 'red',
+        stripeOpacity: 1
+      },
+      allGlyph: [],
     };
   },
+  props: ['updateData'],
   methods: {
     IsValid(result, candidate, threshold) {
       for (const resultElement of result) {
@@ -73,13 +97,33 @@ export default {
               break;
             }
           }
-          console.log(result.length)
           if (!candidateAccepted) {
             spawnPoints.pop(spawnIndex);
           }
         }
       }
       return result;
+    },
+    createGlyph(value) {
+      if (this.allGlyph.length !== 0) {
+        for (let allGlyphElement of this.allGlyph) {
+          allGlyphElement.remove();
+        }
+        this.allGlyph = [];
+      }
+      if (value.glyph === 1) {
+        let regionInfo = this.randomGetRegion(value.regionNum, this.peaGlyphCondition.size);
+        for (const regionInfoElement of regionInfo) {
+          let g = drawPeaGlyph(this.mapSvg, this.peaGlyphCondition, regionInfoElement.data, regionInfoElement.centerPosition, this.$store.state.qinlingColorEncoding)
+          this.allGlyph.push(g);
+        }
+      } else {
+        let regionInfo = this.randomGetRegion(value.regionNum, this.stripeGlyphCondition.size);
+        for (const regionInfoElement of regionInfo) {
+          let g = drawStripeGlyph(this.mapSvg, this.stripeGlyphCondition, regionInfoElement.data, regionInfoElement.centerPosition, this.$store.state.qinlingColorEncoding)
+          this.allGlyph.push(g);
+        }
+      }
     }
   },
   mounted() {
@@ -114,13 +158,29 @@ export default {
         .attr("fill", "#2d3b38")
         .attr('d', vc.path)
         .attr('stroke', 'grey');
-    let regionInfo = vc.randomGetRegion(10, 180);
-    for (const regionInfoElement of regionInfo) {
-      drawPeaGlyph(vc.mapSvg, vc.peaGlyphCondition, regionInfoElement.data, regionInfoElement.centerPosition, this.$store.state.qinlingColorEncoding)
-    }
+    // let regionInfo = vc.randomGetRegion(10, 180);
+    // for (const regionInfoElement of regionInfo) {
+    //   drawPeaGlyph(vc.mapSvg, vc.peaGlyphCondition, regionInfoElement.data, regionInfoElement.centerPosition, this.$store.state.qinlingColorEncoding)
+    // }
 
+    // let regionInfo = vc.randomGetRegion(10, 185);
+    // for (const regionInfoElement of regionInfo) {
+    //   drawStripeGlyph(vc.mapSvg, vc.stripeGlyphCondition, regionInfoElement.data, regionInfoElement.centerPosition, this.$store.state.qinlingColorEncoding)
+    // }
+    this.createGlyph(this.updateData);
+
+    // console.log(this.glyphData)
     // console.log(vc.path.centroid(vc.features[0]))
     // console.log(vc.randomGetRegion(10, 150));
+  },
+  watch: {
+    updateData: {
+      deep: true,
+      handler(newVal, oldVal) {
+        this.createGlyph(newVal);
+
+      }
+    }
   }
 }
 </script>

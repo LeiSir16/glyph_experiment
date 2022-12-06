@@ -47,7 +47,7 @@
             </el-row>
             <el-row>
               <el-col :span="18" :offset="6">
-                <ColorLegend/>
+                <ColorLegend :experiment="1"/>
               </el-col>
             </el-row>
           </el-row>

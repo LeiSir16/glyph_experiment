@@ -1,6 +1,6 @@
 <template>
   <!--如果是第一个实验-->
-  <div v-if="desCondition&&(desCondition.experiment === 2||desCondition.experiment === -2)"
+  <div v-if="desCondition&&(desCondition.experiment === 2||desCondition.experiment === -2||desCondition.experiment===3)"
        style="padding-bottom: 10px">
     <!--如果是peaglyph-->
     <template v-if="desCondition.glyph === 1">

@@ -240,6 +240,17 @@ const state = {
         Population_Growth: '人口增长指数',
         Good_Governance: '政府治理水平指数'
     },
+    qinlingColorName: {
+        tem: '温度',
+        wns: '风速',
+        wns_100m: '100m风速',
+        vis: '能见度',
+        gust: '10m阵风风速',
+        st_40: '40cm土壤温度',
+        st_200: '200cm土壤温度',
+        sw_40: '40cm土壤湿度',
+        sw_200: '200cm土壤湿度'
+    },
     ExperimentAData: {},
     ExperimentBData: {},
     Test: [],

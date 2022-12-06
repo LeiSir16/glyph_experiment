@@ -19,7 +19,7 @@
             </el-row>
             <el-row>
               <el-col :span="18" :offset="6">
-                <ColorLegend/>
+                <ColorLegend :experiment="2"/>
               </el-col>
             </el-row>
           </el-row>
@@ -32,7 +32,7 @@
             </el-row>
             <el-row>
               <el-col :span="23" :offset="1">
-<!--                <Description :des-condition="descriptionCondition"/>-->
+                <Description :des-condition="descriptionCondition"/>
               </el-col>
             </el-row>
           </el-row>
@@ -45,7 +45,7 @@
             </el-row>
             <el-row>
               <el-col :span="24">
-<!--                <Task :task-condition="taskCondition"/>-->
+                <!--                <Task :task-condition="taskCondition"/>-->
               </el-col>
             </el-row>
           </el-row>
@@ -67,15 +67,43 @@ export default {
   components: {QinlingMap, Task, Description, ColorLegend},
   data() {
     return {
+      childExperimentNum: 1,
+      glyphType: [1, 2],
+      experimentType: [],
+      curActive: 0,
       showGlyph: {
         glyph: 2,
         regionNum: 9
       }
     }
   },
+  created() {
+    // 初始化实验数据
+    this.glyphType.forEach((glyph, index) => {
+      let e = {
+        // glyph类型
+        glyph: glyph,
+        // 该组实验最大数量
+        max_num: this.childExperimentNum,
+        // 当前已经进行了几次
+        cur_num: 0
+      }
+      this.experimentType.push(e);
+    });
+  },
   mounted() {
 
-  }
+  },
+  computed: {
+    descriptionCondition() {
+      return {
+        experiment: 3,
+        glyph: this.showGlyph.glyph,
+        value: 2,
+        max: 10
+      };
+    }
+  },
 }
 </script>
 

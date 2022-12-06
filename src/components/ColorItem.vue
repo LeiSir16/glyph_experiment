@@ -26,12 +26,17 @@ export default {
       outlineThickness: 1
     };
   },
-  props: ['colorName'],
+  props: ['colorName', 'experiment'],
   mounted() {
   },
   computed: {
     encodingName() {
-      let chineseName = this.$store.state.ssiColorName;
+      let chineseName = '';
+      if (this.experiment === 1) {
+        chineseName = this.$store.state.ssiColorName;
+      } else {
+        chineseName = this.$store.state.qinlingColorName;
+      }
       let englishName = this.colorName.name;
       return chineseName[englishName];
     }

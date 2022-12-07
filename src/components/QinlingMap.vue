@@ -14,41 +14,43 @@ export default {
   data() {
     return {
       mapSize: [
-        1450, 780
+        1500, 780
       ],
       peaGlyphCondition: {
-        size: 180,
+        size: 170,
         outline_thickness: 1,
         outline_offset: 0,
-        circle_value: 2,
-        circle_num: 10,
+        circle_num: 40,
         outline_dis: 10,
-        center_offset: 4,
+        center_offset: 3,
         thickness: 0.5
       },
       stripeGlyphCondition: {
-        size: 180,
-        iRadius: 3,
+        size: 170,
+        iRadius: 2.5,
         maxRadius: 10,
-        sectorInterval: 1.5,
+        sectorInterval: 3,
         svgEdgeDis: 0,
-        outlineThickness: 1,
+        outlineThickness: 0.5,
         divisionColor: 'white',
         divisionOpacity: 1,
         bgOpacity: 0,
         innerOpacity: 1,
-        stripe_L_R: .12,
-        stripe_B_A: .08,
-        stripeProportion: .117,
-        layerNum: 4,
+        stripe_L_R: .1,
+        stripe_B_A: .02,
+        stripeProportion: .072,
+        layerNum: 10,
         metaphorColor: '#C0C0C0',
         metaphorOpacity: 1,
-        encodingValue: 2,
+        // 这个值现在传递的是编码的条纹的数量
+        stripeNum: 40,
         isEncodingInfor: true,
         encodingInforColor: 'red',
         stripeOpacity: 1
       },
       allGlyph: [],
+      curClickGlyph: '',
+      curClickGlyphData: {},
     };
   },
   props: ['updateData'],
@@ -63,45 +65,50 @@ export default {
     },
     randomGetRegion(num, threshold) {
       let result = [];
-      let spawnPoints = [];
-      let tryNum = 30;
       if (this.features) {
-        // 先随机选一个区域数据放进去
-        let index = Math.floor(Math.random() * this.features.length);
-        let region = this.features[index].properties.省C[0];
-        let data = this.glyphData[region];
-        let centerPosition = this.path.centroid(this.features[index]);
-        let regionInfo = {
-          centerPosition: centerPosition,
-          data: data
-        }
-        spawnPoints.push(regionInfo);
-        while (result.length < num) {
-          let spawnIndex = Math.floor(Math.random() * spawnPoints.length);
-          let spawnCentre = spawnPoints[spawnIndex];
-          let candidateAccepted = false;
+        // 防止无限地查找下去
+        let lastLength = 0, times = 0, totalNum = 0, tryNum = 30;
+        while (result.length < num && totalNum < 100) {
+          if (times > 100) {
+            // 如果找了100次还没找到就置空result重新查找
+            result = [];
+            // 如果置空了30次还没找到就表示找不到了
+            totalNum++;
+            // console.log('totalNum', totalNum)
+            continue;
+          }
           for (let i = 0; i < tryNum; i++) {
-            index = Math.floor(Math.random() * this.features.length);
-            region = this.features[index].properties.省C[0];
-            data = this.glyphData[region];
-            centerPosition = this.path.centroid(this.features[index]);
-            regionInfo = {
+            let index = Math.floor(Math.random() * this.features.length);
+            let region = this.features[index].properties.省C[0];
+            let data = this.glyphData[region];
+            let centerPosition = this.path.centroid(this.features[index]);
+            let regionInfo = {
               centerPosition: centerPosition,
               data: data
             }
             if (this.IsValid(result, regionInfo, threshold)) {
               result.push(regionInfo);
-              spawnPoints.push(regionInfo);
-              candidateAccepted = true;
               break;
             }
           }
-          if (!candidateAccepted) {
-            spawnPoints.pop(spawnIndex);
+          if (lastLength !== result.length) {
+            lastLength = result.length;
+            times = 0;
+          } else {
+            times++;
           }
+          // console.log('times', times)
         }
       }
-      return result;
+      if (result.length < num) {
+        console.log('找不到')
+      }
+      // console.log(result)
+      return result
+    },
+    glyphClick(outline, data) {
+      this.curClickGlyph = outline;
+      this.curClickGlyphData = data;
     },
     createGlyph(value) {
       if (this.allGlyph.length !== 0) {
@@ -119,7 +126,7 @@ export default {
       } else {
         let regionInfo = this.randomGetRegion(value.regionNum, this.stripeGlyphCondition.size);
         for (const regionInfoElement of regionInfo) {
-          let g = drawStripeGlyph(this.mapSvg, this.stripeGlyphCondition, regionInfoElement.data, regionInfoElement.centerPosition, this.$store.state.qinlingColorEncoding)
+          let g = drawStripeGlyph(this.mapSvg, this.stripeGlyphCondition, regionInfoElement.data, regionInfoElement.centerPosition, this.$store.state.qinlingColorEncoding, this.glyphClick)
           this.allGlyph.push(g);
         }
       }
@@ -162,12 +169,23 @@ export default {
     // console.log(this.glyphData)
     // console.log(vc.path.centroid(vc.features[0]))
     // console.log(vc.randomGetRegion(10, 150));
+    this.$bus.$on('resetGlyphChoose', () => {
+      if (this.curClickGlyph && this.curClickGlyphData) {
+        this.curClickGlyph.select('rect').attr('stroke-opacity', 0);
+        this.curClickGlyph = '';
+        this.curClickGlyphData = {};
+      }
+    });
+    this.$bus.$on('updateMapShowData', () => {
+      this.createGlyph(this.updateData);
+    })
   },
   watch: {
     updateData: {
       deep: true,
       handler(newVal, oldVal) {
         this.createGlyph(newVal);
+        console.log('更新')
       }
     }
   },

@@ -10,8 +10,8 @@
                 :stroke-width="outlineThickness"></circle>
       </svg>
     </el-col>
-    <el-col :span="18" :offset="1">
-      {{ encodingName }}
+    <el-col :span="19" :offset="experiment === 2 ? 0 : 1">
+      {{ encodingName }}<span class="under_line max_des" v-show="experiment === 2">    (最大为{{ showMax }})</span>
     </el-col>
   </el-row>
 </template>
@@ -35,15 +35,35 @@ export default {
       if (this.experiment === 1) {
         chineseName = this.$store.state.ssiColorName;
       } else {
+        // 2
         chineseName = this.$store.state.qinlingColorName;
       }
       let englishName = this.colorName.name;
       return chineseName[englishName];
+    },
+    showMax() {
+      let show = '';
+      if (this.experiment === 2) {
+        let qinlingMax = this.$store.state.qinlingDataMax;
+        let englishName = this.colorName.name;
+        let value = 0;
+        // 小数转化为百分比
+        if (englishName === 'sw_40' || englishName === 'sw_200') {
+          value = qinlingMax[englishName].max * 100;
+        } else {
+          value = qinlingMax[englishName].max;
+        }
+        show = value.toFixed(2) + qinlingMax[englishName].units;
+      }
+
+      return show;
     }
   },
 }
 </script>
 
 <style scoped>
-
+.max_des {
+  font-size: small;
+}
 </style>

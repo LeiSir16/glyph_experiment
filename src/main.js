@@ -29,7 +29,7 @@ import {
     InputNumber,
     Image,
     Radio,
-    RadioGroup, Notification
+    RadioGroup, Notification, ButtonGroup
 } from "element-ui";
 
 Vue.config.productionTip = false
@@ -57,7 +57,8 @@ Vue.use(Slider);
 Vue.use(InputNumber);
 Vue.use(Image);
 Vue.use(RadioGroup);
-Vue.use(Radio)
+Vue.use(Radio);
+Vue.use(ButtonGroup)
 new Vue({
     render: h => h(App),
     router,

@@ -41,15 +41,25 @@
       <!-- 问题描述-->
       <el-row type="flex" align="middle">
         <el-col :span="23" :offset="1" class="task_description">
-          请从左侧秦岭地图上展示的图形中选择<span class="under_line">温度</span>最大的图形
+          请从左侧秦岭地图上展示的图形中选择<span class="under_line">温度值第二大</span>的图形
         </el-col>
       </el-row>
       <!--说明-->
       <el-row type="flex" align="middle" class="text shuoming">
         <el-col :span="23" :offset="1">
-          <span class="under_line">说明：</span>请在下方输入或长按+/-提交您估算的结果(小数点后两位)，<span
-            class="under_line">并点击【保存结果】按钮保存</span>。保存后即可点击<span
-            v-show="isNext">【下一步】按钮进行后续实验</span><span v-show="!isNext">提交结果按钮导出结果</span>
+          <span class="under_line">说明：</span>请根据任务在地图上<span
+            class="under_line">点击选择图形</span>，并点击<span class="under_line">【保存结果】</span>按钮保存结果，如需重新选择请点击<span
+            class="under_line">【重新选择】</span>按钮，保存结果后点击<span class="under_line">【下一步】</span>进行后续实验
+        </el-col>
+      </el-row>
+      <el-row style="text-align: center">
+        <el-col :span="24">
+          <el-button-group>
+            <el-button plain size="small" icon="el-icon-refresh-left" @click="resetChoose">重新选择</el-button>
+            <el-button type="primary" size="small">保存结果</el-button>
+            <el-button type="success" size="small" @click="nextStep">下一步<i
+                class="el-icon-arrow-right el-icon--right"></i></el-button>
+          </el-button-group>
         </el-col>
       </el-row>
     </template>
@@ -77,6 +87,8 @@ export default {
         this.$bus.$emit('nextStepExperimentBTraining');
       } else if (this.taskCondition.experiment === 2) {
         this.$bus.$emit('nextSmallExperimentBPage');
+      } else if (this.taskCondition.experiment === 3) {
+        this.$bus.$emit('nextSmallExperimentCPage');
       }
     },
     // 将实验的结果存在Cookie中
@@ -145,6 +157,10 @@ export default {
       let attrs = this.findDifference(value.data[0], value.data[1], value.circleValue / 2);
       let index = Math.floor(Math.random() * attrs.length);
       return attrs[index].split(" ").join("_");
+    },
+    // 重置地图上glyph地选择
+    resetChoose() {
+      this.$bus.$emit('resetGlyphChoose');
     }
   },
   mounted() {

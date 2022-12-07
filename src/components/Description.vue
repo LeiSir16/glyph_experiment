@@ -1,57 +1,101 @@
 <template>
-  <!--如果是第一个实验-->
-  <div v-if="desCondition&&(desCondition.experiment === 2||desCondition.experiment === -2||desCondition.experiment===3)"
-       style="padding-bottom: 10px">
-    <!--如果是peaglyph-->
-    <template v-if="desCondition.glyph === 1">
-      <el-row>
-        <el-col :span="23" :offset="1" class="title">
-          圆圈填充的颜色表示<span class="under_line">数据的类别</span>
-        </el-col>
-      </el-row>
-      <el-row>
-        <el-col :span="23" :offset="1" class="title">
-          每个圆圈表示的值的大小为<span class="under_line">{{ desCondition.value.toFixed(2) }}</span>
-        </el-col>
-      </el-row>
-      <el-row>
-        <el-col :span="23" :offset="1" class="title">
-          每类数据最多可以通过<span class="under_line">{{ desCondition.max }}</span>个圆圈表示
-        </el-col>
-      </el-row>
-      <el-row>
-        <el-col :span="23" :offset="1" class="title">
-          每类数据表达的值的范围是<span class="under_line">[0,{{ desCondition.value * desCondition.max }}]</span>
-        </el-col>
-      </el-row>
+  <div>
+    <!--如果是第一个实验-->
+    <template v-if="desCondition&&(desCondition.experiment === 2||desCondition.experiment === -2)">
+      <!--如果是peaglyph-->
+      <template v-if="desCondition.glyph === 1">
+        <el-row>
+          <el-col :span="23" :offset="1" class="title">
+            圆圈填充的颜色表示<span class="under_line">数据的类别</span>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="23" :offset="1" class="title">
+            每个圆圈表示的值的大小为<span class="under_line">{{ desCondition.value.toFixed(2) }}</span>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="23" :offset="1" class="title">
+            每类数据最多可以通过<span class="under_line">{{ desCondition.max }}</span>个圆圈表示
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="23" :offset="1" class="title">
+            每类数据表达的值的范围是<span class="under_line">[0,{{ desCondition.value * desCondition.max }}]</span>
+          </el-col>
+        </el-row>
+      </template>
+      <!-- 如果是stripeGlyph-->
+      <template v-else-if="desCondition.glyph===2">
+        <el-row>
+          <el-col :span="23" :offset="1" class="text">
+            条纹段填充的颜色表达了<span class="under_line">数据的类别</span>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="23" :offset="1" class="text">
+            每个条纹段表示的值为<span class="under_line">{{ desCondition.value.toFixed(2) }}</span>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="23" :offset="1" class="text">
+            每类数据最多可以通过<span class="under_line">{{ desCondition.max }}</span>个条纹段编码
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="23" :offset="1" class="text">
+            每类数据表达的值的范围是<span class="under_line">[0,{{ desCondition.value * desCondition.max }}]</span>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="23" :offset="1" class="text">
+            每个扇形区域的<span class="under_line">灰色半透明条纹段和彩色条纹段的数量之和</span>表达了该扇形区域所能编码条纹段的最大值
+          </el-col>
+        </el-row>
+      </template>
     </template>
-    <!-- 如果是stripeGlyph-->
-    <template v-else-if="desCondition.glyph===2">
-      <el-row>
-        <el-col :span="23" :offset="1" class="text">
-          条纹段填充的颜色表达了<span class="under_line">数据的类别</span>
-        </el-col>
-      </el-row>
-      <el-row>
-        <el-col :span="23" :offset="1" class="text">
-          每个条纹段表示的值为<span class="under_line">{{ desCondition.value.toFixed(2) }}</span>
-        </el-col>
-      </el-row>
-      <el-row>
-        <el-col :span="23" :offset="1" class="text">
-          每类数据最多可以通过<span class="under_line">{{ desCondition.max }}</span>个小条纹编码
-        </el-col>
-      </el-row>
-      <el-row>
-        <el-col :span="23" :offset="1" class="text">
-          每类数据表达的值的范围是<span class="under_line">[0,{{ desCondition.value * desCondition.max }}]</span>
-        </el-col>
-      </el-row>
-      <el-row>
-        <el-col :span="23" :offset="1" class="text">
-          每个扇形区域的<span class="under_line">灰色半透明条纹段</span>和彩色条纹段的数量之和表达了该扇形区域所能编码条纹段的最大值
-        </el-col>
-      </el-row>
+    <template v-else-if="desCondition&&(desCondition.experiment === 3)">
+      <!--如果是peaglyph-->
+      <template v-if="desCondition.glyph === 1">
+        <el-row>
+          <el-col :span="23" :offset="1" class="title">
+            圆圈填充的颜色表示<span class="under_line">数据的类别</span>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="23" :offset="1" class="title">
+            每个圆圈表示的值是对应类别<span class="under_line">最大值的1/{{ desCondition.max }}</span>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="23" :offset="1" class="title">
+            每类数据最多可以通过<span class="under_line">{{ desCondition.max }}</span>个圆圈表示
+          </el-col>
+        </el-row>
+      </template>
+      <!-- 如果是stripeGlyph-->
+      <template v-else-if="desCondition.glyph===2">
+        <el-row>
+          <el-col :span="23" :offset="1" class="text">
+            条纹段填充的颜色表达了<span class="under_line">数据的类别</span>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="23" :offset="1" class="text">
+            每个条纹段表示的值是对应类别<span class="under_line">最大值的1/{{ desCondition.max }}</span>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="23" :offset="1" class="text">
+            每类数据最多可以通过<span class="under_line">{{ desCondition.max }}</span>个条纹段编码
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="23" :offset="1" class="text">
+            每个扇形区域的<span class="under_line">灰色半透明条纹段和彩色条纹段的数量之和</span>表达了该扇形区域所能编码条纹段的最大值
+          </el-col>
+        </el-row>
+      </template>
     </template>
   </div>
 </template>

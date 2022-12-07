@@ -44,7 +44,7 @@ let attrChinese = {
 /**
  * 绘制一个peaGlyph
  * @param svgs      被绘制的svg
- * @param condition glyph的控制条件{size，outline_offset, outline_thickness,circle_value,circle_num,outline_dis,center_offset,thickness}
+ * @param condition glyph的控制条件{size，outline_offset, outline_thickness,circle_num,outline_dis,center_offset,thickness}
  * @param data      数据
  * @param position  绘制的位置
  */
@@ -57,7 +57,7 @@ export function drawPeaGlyph(svgs, condition, data, position, qinlingcolor) {
         .attr('class', uniformId)
         .datum(data);
 
-    // 当鼠标移动上去的时候可以显示一个边框
+    // 当鼠标点击的时候可以显示一个边框
     let mouseOutline = createSvgOutline(peaGlyph, uniformId, condition.size, position);
     peaGlyph.on('click', () => {
         mouseOutline.select('rect').attr('stroke-opacity', 1);
@@ -109,15 +109,17 @@ export function drawPeaGlyph(svgs, condition, data, position, qinlingcolor) {
 
     let glyph_circles = glyph_attr.selectAll("g")
         .data(function (d) {
+            // 获取指定数量小球对应的每个小球应该编码的值的大小
+            let attr = getValueBaseStripeNum(condition.circle_num);
             let values = [];
             // 属性值小于0表示没有这个属性
             if (d.value >= 0) {
-                if (d.value >= condition.circle_value) {
-                    let total = Math.floor(d.value / condition.circle_value);
-                    let remain = d.value - total * condition.circle_value;
+                if (d.value >= d[attr]) {
+                    let total = Math.floor(d.value / d[attr]);
+                    let remain = d.value - total * d[attr];
                     for (let i = 0; i < condition.circle_num; i++) {
                         if (i < total) {
-                            values.push(condition.circle_value);
+                            values.push(d[attr]);
                         } else if (i === total) {
                             values.push(remain);
                         } else {
@@ -182,9 +184,12 @@ export function drawPeaGlyph(svgs, condition, data, position, qinlingcolor) {
         })
         .attr("width", radius * 2 - condition.thickness)
         .attr("height", function (d) {
+            let curData = d3.select(this.parentNode.parentNode.parentNode.parentNode).data()[0];
+            let aCircleValue = curData[getValueBaseStripeNum(condition.circle_num)];
+            // console.log(aCircleValue)
             let height = radius * 2 - condition.thickness;
             let height_scale = d3.scaleLinear()
-                .domain([0, condition.circle_value])
+                .domain([0, aCircleValue])
                 .range([height, 0]);
             if (d < 0) {
                 return 0;
@@ -205,24 +210,6 @@ export function drawPeaGlyph(svgs, condition, data, position, qinlingcolor) {
             let id_name = d3.select(this.previousSibling).select("clipPath").attr("id");
             return "url(#" + id_name + ")";
         });
-    // console.log(glyph_attr)
-    let showText = createAttrDetail(peaGlyph, uniformId, '');
-    glyph_attr.on('mouseover', function (e) {
-        e.stopPropagation();
-        let curAttrData = d3.select(this).data()[0];
-        // console.log(this)
-        let showValue = curAttrData.realMax;
-        if (curAttrData.name === 'sw_10' || curAttrData.name === 'sw_200' || curAttrData.name === 'sw_40' || curAttrData.name === 'sw_20') {
-            showValue *= 100;
-        }
-        let show = attrChinese[curAttrData.name].name + "最大为：" + showValue.toFixed(2) + attrChinese[curAttrData.name].units
-        showText.select('text').text(show);
-        showText.selectAll('text').attr('fill-opacity', 1).attr('x', e.offsetX).attr('y', e.offsetY);
-    });
-    glyph_attr.on('mouseleave', function (e) {
-        e.stopPropagation();
-        showText.selectAll('text').attr('fill-opacity', 0);
-    });
 
     return peaGlyph;
 }
@@ -231,12 +218,12 @@ export function drawPeaGlyph(svgs, condition, data, position, qinlingcolor) {
  * 创建stripeGlyph
  * @param svgs          要附加的svg
  * @param condition     一些条件限制{ size,iRadius , maxRadius,sectorInterval,svgEdgeDis,outlineThickness,divisionColor,divisionOpacity,
- * bgOpacity,innerOpacity,stripe_L_R,stripe_B_A,stripeProportion,layerNum,metaphorColor,metaphorOpacity,encodingValue, isEncodingInfor,encodingInforColor,stripeOpacity}
+ * bgOpacity,innerOpacity,stripe_L_R,stripe_B_A,stripeProportion,layerNum,metaphorColor,metaphorOpacity,stripeNum, isEncodingInfor,encodingInforColor,stripeOpacity}
  * @param data          数据
  * @param position      位置信息
  * @param qinlingcolor  颜色编码
  */
-export function drawStripeGlyph(svgs, condition, data, position, qinlingcolor) {
+export function drawStripeGlyph(svgs, condition, data, position, qinlingcolor, glyphClickCallback) {
     let uniformId = 'stripeGlyph' + '-' + data.index + '-' + nanoid();
     // 这就是一整个glyph
     let stripeGlyph = svgs.append('g')
@@ -259,7 +246,7 @@ export function drawStripeGlyph(svgs, condition, data, position, qinlingcolor) {
     // 点击回传数据
     stripeGlyph.on('click', () => {
         mouseOutline.select('rect').attr('stroke-opacity', 1);
-        console.log(stripeGlyph.data()[0]);
+        glyphClickCallback(mouseOutline, stripeGlyph.data()[0]);
     });
 
     // 获取所有的隐喻条纹
@@ -325,38 +312,13 @@ export function drawStripeGlyph(svgs, condition, data, position, qinlingcolor) {
     let content = createContent(stripeGlyph, uniformId, {
         aSector,
         sectorInterval: condition.sectorInterval,
-        encodingValue: condition.encodingValue,
+        stripeNum: condition.stripeNum,
         sectorTotalStripe,
         color: qinlingcolor,
         isEncodingInfor: condition.isEncodingInfor,
         encodingInforColor: condition.encodingInforColor,
         stripeOpacity: condition.stripeOpacity
     }, position);
-    let showText = createAttrDetail(stripeGlyph, uniformId, '');
-    // 创建背景用于触发事件
-    let bindEvent = createBackground(stripeGlyph, uniformId, {
-        metaData,
-        encodingColor: qinlingcolor,
-        bgOpacity: 0,
-        aSector,
-        sectorInterval: condition.sectorInterval,
-        isEvent: true,
-    }, position);
-    bindEvent.on('mouseover', function (e) {
-        e.stopPropagation();
-        let curAttrData = d3.select(this).data()[0];
-        let showValue = curAttrData.realMax;
-        if (curAttrData.name === 'sw_10' || curAttrData.name === 'sw_200' || curAttrData.name === 'sw_40' || curAttrData.name === 'sw_20') {
-            showValue *= 100;
-        }
-        let show = attrChinese[curAttrData.name].name + "最大为：" + showValue.toFixed(2) + attrChinese[curAttrData.name].units
-        showText.select('text').text(show);
-        showText.selectAll('text').attr('fill-opacity', 1).attr('x', e.offsetX).attr('y', e.offsetY);
-    });
-    bindEvent.on('mouseleave', function (e) {
-        e.stopPropagation();
-        showText.selectAll('text').attr('fill-opacity', 0);
-    });
     return stripeGlyph;
 }
 
@@ -521,7 +483,7 @@ function createMetaphor(svgs, id, condition, position) {
  *
  * @param svgs
  * @param id
- * @param condition     控制条件{aSector, sectorInterval, encodingValue, sectorTotalStripe, color, isEncodingInfor, encodingInforColor,stripeOpacity}
+ * @param condition     控制条件{aSector, sectorInterval, stripeNum, sectorTotalStripe, color, isEncodingInfor, encodingInforColor,stripeOpacity}
  * @param position
  */
 function createContent(svgs, id, condition, position) {
@@ -543,21 +505,25 @@ function createContent(svgs, id, condition, position) {
         });
     let glyph_content_stripe = glyphContent.selectAll("path")
         .data(function (d) {
-            let num = Math.ceil(d.value / condition.encodingValue);
+            // encodingValue现在编码的是条纹的数量
+            let aValue = getValueBaseStripeNum(condition.stripeNum)
+            let num = Math.ceil(d.value / d[aValue]);
+            // console.log(d.name, d.value, d[aValue], num);
             return condition.sectorTotalStripe.slice(0, num);
         })
         .join("path")
         .attr("d", function (d, i) {
-            let ve = d3.select(this.parentNode).data()[0].value;
-            let num = Math.floor(ve / condition.encodingValue);
+            let ve = d3.select(this.parentNode).data()[0];
+            let aValue = getValueBaseStripeNum(condition.stripeNum)
+            let num = Math.floor(ve.value / ve[aValue]);
             let arcs = d3.arc()
                 .innerRadius(d.inner_r)
                 .outerRadius(d.outer_r)
                 .startAngle(d.start);
             if (i === num) {
-                let remain = ve - num * condition.encodingValue;
+                let remain = ve.value - num * ve[aValue];
                 let radian_scale = d3.scaleLinear()
-                    .domain([0, condition.encodingValue])
+                    .domain([0, ve[aValue]])
                     .range([d.start, d.end]);
                 arcs.endAngle(radian_scale(remain));
             } else {
@@ -617,4 +583,28 @@ function createAttrDetail(svgs, id, data) {
         .attr("text-anchor", "start")
         .attr('fill-opacity', 0)
     return details;
+}
+
+/**
+ * 根据当前条纹数量来判断每个stripe编码值的大小
+ * @param stripeNum
+ * @returns {string}
+ */
+function getValueBaseStripeNum(stripeNum) {
+    let attr = 'value_';
+    switch (stripeNum) {
+        case 10:
+            attr += 10;
+            break;
+        case 20:
+            attr += 20;
+            break;
+        case 30:
+            attr += 30;
+            break;
+        case 40:
+            attr += 40;
+            break;
+    }
+    return attr;
 }

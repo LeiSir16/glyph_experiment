@@ -157,15 +157,6 @@ export default {
         .attr("fill", "#2d3b38")
         .attr('d', vc.path)
         .attr('stroke', 'grey');
-    // let regionInfo = vc.randomGetRegion(10, 180);
-    // for (const regionInfoElement of regionInfo) {
-    //   drawPeaGlyph(vc.mapSvg, vc.peaGlyphCondition, regionInfoElement.data, regionInfoElement.centerPosition, this.$store.state.qinlingColorEncoding)
-    // }
-
-    // let regionInfo = vc.randomGetRegion(10, 185);
-    // for (const regionInfoElement of regionInfo) {
-    //   drawStripeGlyph(vc.mapSvg, vc.stripeGlyphCondition, regionInfoElement.data, regionInfoElement.centerPosition, this.$store.state.qinlingColorEncoding)
-    // }
     this.createGlyph(this.updateData);
 
     // console.log(this.glyphData)

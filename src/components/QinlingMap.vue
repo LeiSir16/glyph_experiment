@@ -183,9 +183,9 @@ export default {
       }
     });
     // 重新生成Glyph
-    this.$bus.$on('reShowData', () => {
+    this.$bus.$on('resetCurrentExperimentC', () => {
       this.createGlyph(this.updateData)
-    })
+    });
   },
   watch: {
     updateData: {

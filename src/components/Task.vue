@@ -37,7 +37,7 @@
         </el-col>
       </el-row>
     </template>
-    <template v-else-if="taskCondition&&(taskCondition.experiment === 3)">
+    <template v-else-if="taskCondition&&(taskCondition.experiment === 3||taskCondition.experiment === -3)">
       <!-- 问题描述-->
       <el-row type="flex" align="middle">
         <el-col :span="23" :offset="1" class="task_description">
@@ -96,6 +96,8 @@ export default {
         this.$bus.$emit('nextSmallExperimentBPage');
       } else if (this.taskCondition.experiment === 3) {
         this.$bus.$emit('nextSmallExperimentCPage');
+      } else if (this.taskCondition.experiment === -3) {
+        this.$bus.$emit('nextSmallExperimentCTrainingPage');
       }
     },
     // 将实验的结果存在Cookie中
@@ -104,6 +106,8 @@ export default {
         this.$bus.$emit('experimentBResultLocal', getCurrentTime());
       } else if (this.taskCondition.experiment === -2) {
         this.$bus.$emit('experimentBTrainingResultLocal');
+      } else if (this.taskCondition.experiment === -3) {
+        this.$bus.$emit('experimentCTrainingResultLocal');
       } else if (this.taskCondition.experiment === 3) {
         this.$bus.$emit('experimentCResultLocal');
       }
@@ -173,13 +177,15 @@ export default {
     },
     // 实验二随机生成一种属性
     experimentCRandomAttr() {
-      let qinlingAttr = this.$store.state.qinlingColorName;
-      let qinlingAttrKeys = Object.keys(qinlingAttr);
-      let index = Math.floor(qinlingAttrKeys.length * Math.random());
-      this.ExperimentCAttr = {
-        attr: qinlingAttrKeys[index],
-        chineseName: qinlingAttr[qinlingAttrKeys[index]]
-      };
+      if (this.taskCondition.experiment === 3 || this.taskCondition.experiment === -3) {
+        let qinlingAttr = this.$store.state.qinlingColorName;
+        let qinlingAttrKeys = Object.keys(qinlingAttr);
+        let index = Math.floor(qinlingAttrKeys.length * Math.random());
+        this.ExperimentCAttr = {
+          attr: qinlingAttrKeys[index],
+          chineseName: qinlingAttr[qinlingAttrKeys[index]]
+        };
+      }
     },
     // 实验二的保存结果按钮
     experimentCSave() {
@@ -188,8 +194,11 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-
-        this.$bus.$emit('saveExperimentCData');
+        if (this.taskCondition.experiment === 3) {
+          this.$bus.$emit('saveExperimentCData');
+        } else {
+          this.$bus.$emit('saveExperimentCTrainingData');
+        }
       }).catch(() => {
         console.log("已取消保存");
       });
@@ -211,6 +220,16 @@ export default {
         }
       }
     });
+    this.$bus.$on('resetCurrentExperimentC', () => {
+      // 重置示例同时也再随机生成一种属性
+      if (this.taskCondition && this.taskCondition.experiment === -3) {
+        this.experimentCRandomAttr();
+        // 重置之后按钮禁用
+        if (this.experimentCIsSave === true) {
+          this.experimentCIsSave = false;
+        }
+      }
+    })
     this.$bus.$on('enableNextStep', () => {
       if (this.taskCondition && this.taskCondition.experiment === 2) {
         this.isSave = true;
@@ -224,6 +243,11 @@ export default {
 
     this.$bus.$on('enableNextStepExperimentC', () => {
       if (this.taskCondition && this.taskCondition.experiment === 3) {
+        this.experimentCIsSave = true;
+      }
+    });
+    this.$bus.$on('enableNextStepExperimentCTraining', () => {
+      if (this.taskCondition && this.taskCondition.experiment === -3) {
         this.experimentCIsSave = true;
       }
     });
@@ -247,7 +271,7 @@ export default {
             this.isSave = false;
             this.differenceSlider = 0;
           }
-        } else if (newVal && (newVal.experiment === 3)) {
+        } else if (newVal && (newVal.experiment === 3 || newVal.experiment === -3)) {
           this.experimentCIsNext = newVal.active !== newVal.singleExperiment * 2 - 1;
           if (oldVal) {
             if (newVal.active !== oldVal.active) {

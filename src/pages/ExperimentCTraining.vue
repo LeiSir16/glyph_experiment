@@ -5,7 +5,15 @@
         <el-col :span="20">
           <el-row>
             <el-col :span="24">
-              <qinling-map :update-data="showGlyph" ref="qinlingMap"/>
+              <qinling-map :update-data="showGlyph"/>
+            </el-col>
+          </el-row>
+          <el-row>
+            <el-col :span="2" :offset="9" v-show="isEnd">
+              <el-button type="primary" icon="el-icon-refresh-left" @click="resetTraining">重新练习</el-button>
+            </el-col>
+            <el-col :span="2" :offset="isEnd ? 2 : 11">
+              <el-button icon="el-icon-refresh-left" @click="resetCurrent">重置实验</el-button>
             </el-col>
           </el-row>
         </el-col>
@@ -63,11 +71,11 @@ import QinlingMap from "@/components/QinlingMap";
 import {getCurrentTime, saveAsJson} from "@/assets/js/tool";
 
 export default {
-  name: "ExperimentC",
+  name: "ExperimentCTraining",
   components: {QinlingMap, Task, Description, ColorLegend},
   data() {
     return {
-      childExperimentNum: 2,
+      childExperimentNum: 1,
       glyphType: [1, 2],
       experimentType: [],
       curActive: 0,
@@ -75,24 +83,10 @@ export default {
       showGlyph: {
         glyph: 2,
         regionNum: 10,
-        isDemo: false,
+        isDemo: true,
         active: 0,
       },
       curExperiment: {},
-      ExperimentCData: {
-        startTime: '',
-        endTime: '',
-        childExperiment: [],
-      },
-      curShowData: [],
-      startTime: '',
-      endTime: '',
-      stripeNum: 40,
-      findAttr: '',
-      submitResultTime: '',
-      correctRegion: {},
-      chooseRegion: {},
-      isRight: false,
     }
   },
   created() {
@@ -119,13 +113,9 @@ export default {
   },
   mounted() {
     // 下一步的时候更新数据
-    this.$bus.$on('nextSmallExperimentCPage', () => {
-      if (!this.isAllComplete()) {
+    this.$bus.$on('nextSmallExperimentCTrainingPage', () => {
+      if (this.curActive < this.childExperimentNum * this.glyphType.length) {
         this.curActive++;
-        if (!this.showGlyph.isDemo) {
-          // 下一步的时候记录结束时间
-          this.endTime = getCurrentTime();
-        }
         if (this.curActive === this.childExperimentNum) {
           let m = this.showGlyph.glyph === 1 ? 'PeaGlyph实验已完成！' : 'StripeGlyph实验已完成!';
           this.$notify({
@@ -135,127 +125,48 @@ export default {
             duration: 2000
           });
         }
-        // 点击下一步之后就保存当前小实验的数据
-        this.saveCurrentSmallExperiment();
-        // 每次实验重新开始要重置显示的数据
-        this.curShowData = [];
-        this.chooseRegion = {};
-        this.correctRegion = {};
       } else {
         console.log('没出发');
       }
     });
-    // 记录整个实验开始时间
-    this.$bus.$on('saveCStartTime', () => {
-      if (!this.showGlyph.isDemo) {
-        this.$set(this.ExperimentCData, 'startTime', getCurrentTime());
-      }
+    // 提交结果只提示保存成功
+    this.$bus.$on('experimentCTrainingResultLocal', () => {
+      this.$message({
+        message: '感谢您的参与，数据已保存成功!',
+        type: 'success',
+        duration: 1000
+      });
     });
-    // 提交结果的时候保存该实验结束时间
-    this.$bus.$on('experimentCResultLocal', () => {
-      if (!this.showGlyph.isDemo) {
-        // 提交结果的时候记录最后一个实验的结束时间
-        this.endTime = getCurrentTime();
-        this.$set(this.ExperimentCData, 'endTime', getCurrentTime());
-        this.saveCurrentSmallExperiment();
-        sessionStorage.setItem('ExperimentC', JSON.stringify(this.ExperimentCData));
-        console.log(JSON.stringify(this.ExperimentCData))
-        // 判断是否存储成功
-        if (JSON.parse(sessionStorage.getItem('ExperimentC')).startTime === this.ExperimentCData.startTime) {
-          saveAsJson(JSON.parse(sessionStorage.getItem('ExperimentC')), 3, () => {
-            this.$message({
-              message: '感谢您的参与，数据已保存成功!',
-              type: 'success',
-              duration: 1000
-            });
-          });
-        } else {
-          this.$message({
-            message: '数据保存失败！',
-            type: 'error'
-          });
-        }
-      }
-    })
-    // console.log(this.$refs.qinlingMap.regionInfo)
-    this.$bus.$on('updateExperimentCShowData', (d) => {
-      this.curShowData = d;
-      if (!this.showGlyph.isDemo) {
-        // 每次数据更新的时候记录开始时间
-        this.startTime = getCurrentTime();
-      }
-    });
-
-    // 记录下当前任务需要寻找的属性
-    this.$bus.$on('updateExperimentCRandomChooseAttr', (d) => {
-      if (!this.showGlyph.isDemo) {
-        this.findAttr = d.attr;
-      }
-      // console.log('属性是', d);
-    });
-
-    // 保存当前选择的结果
-    this.$bus.$on('saveExperimentCData', () => {
-      if (!this.showGlyph.isDemo) {
-        this.curShowData.sort(this.compare(this.findAttr));
-        // 存储第二大数据
-        this.correctRegion = this.curShowData[1];
-        // 在保存数据的时候一定保证用户选择了区域
-        if (this.chooseRegion.data) {
-          this.isRight = this.correctRegion.index === this.chooseRegion.index;
-          this.submitResultTime = getCurrentTime();
-          this.$bus.$emit('enableNextStepExperimentC');
-        } else {
-          this.$message({
-            message: '请根据任务选择区域后再保存数据！',
-            type: 'warning'
-          });
-        }
-      }
-    });
-    // 当用户点击选择的时候会更新保存的数据，重新选择会覆盖数据
-    this.$bus.$on('clickChooseData', (d) => {
-      if (!this.showGlyph.isDemo) {
-        this.chooseRegion = d;
-      }
+    // 保存当前选择的结果这里只提示信息
+    this.$bus.$on('saveExperimentCTrainingData', () => {
+      this.$bus.$emit('enableNextStepExperimentCTraining');
     });
   },
   methods: {
-    // 判断两个实验是否完成
     isAllComplete() {
       let sum = 0;
       this.experimentType.forEach((item) => {
         sum += item.cur_num;
       });
+      console.log(this.experimentType)
+      console.log(sum)
       return sum >= this.childExperimentNum * this.glyphType.length - 1;
     },
-    // 数据排序函数 降序排序
-    compare(property) {
-      return function (a, b) {
-        let value1 = a.data.filter((item) => {
-          return item.name === property;
-        });
-        let value2 = b.data.filter((item) => {
-          return item.name === property;
-        });
-        return value2[0].value - value1[0].value;
-      }
+    resetCurrent() {
+      this.$bus.$emit('resetCurrentExperimentC');
     },
-    // 保存当前实验的数据
-    saveCurrentSmallExperiment() {
-      let e = {
-        glyphType: this.showGlyph.glyph,
-        startTime: this.startTime,
-        endTime: this.endTime,
-        submitResultTime: this.submitResultTime,
-        stripeNum: this.stripeNum,
-        findAttr: this.findAttr,
-        correctRegion: this.correctRegion,
-        chooseRegion: this.chooseRegion,
-        isRight: this.isRight,
-        showData: this.curShowData
+    resetTraining() {
+      this.curActive = 0;
+      this.randomBegin = Math.random() > 0.5 ? 1 : 2;
+      this.$set(this.showGlyph, 'glyph', this.randomBegin);
+      if (this.showGlyph.glyph === 1) {
+        this.curExperiment = this.experimentType[0];
+      } else {
+        this.curExperiment = this.experimentType[1];
       }
-      this.ExperimentCData.childExperiment.push(e);
+      this.$set(this.experimentType[0], 'cur_num', 0);
+      this.$set(this.experimentType[1], 'cur_num', 0);
+      console.log(this.experimentType)
     }
   },
   watch: {
@@ -288,7 +199,7 @@ export default {
   computed: {
     descriptionCondition() {
       return {
-        experiment: 3,
+        experiment: -3,
         glyph: this.showGlyph.glyph,
         value: 2,
         max: 40
@@ -296,14 +207,17 @@ export default {
     },
     taskCondition() {
       return {
-        experiment: 3,
+        experiment: -3,
         isDemo: this.showGlyph.isDemo,
         active: this.curActive,
         singleExperiment: this.childExperimentNum,
-        data: this.curShowData,
+        data: '',
         // 每个单位编码的值
         circleValue: 0
       }
+    },
+    isEnd() {
+      return this.curActive === this.childExperimentNum * this.glyphType.length - 1;
     }
   },
 }

@@ -14,16 +14,9 @@
           <span slot="label" class="navigation">实验一(正式实验)</span>
           <ExperimentB :child-experiment-num="1"/>
         </el-tab-pane>
-        <el-tab-pane name="ExperimentCGlyphIntroduction">
-          <span slot="label" class="navigation">实验二(可视化介绍)</span>
-          实验二可视化介绍
-        </el-tab-pane>
-        <el-tab-pane name="ExperimentCIntroduction">
-          <span slot="label" class="navigation">实验二(实验介绍)</span>
-          实验二可视化介绍
-        </el-tab-pane>
         <el-tab-pane name="ExperimentCTraining">
           <span slot="label" class="navigation">实验二(实验练习)</span>
+          <ExperimentCTraining/>
         </el-tab-pane>
         <el-tab-pane name="ExperimentC">
           <span slot="label" class="navigation">实验二(正式实验)</span>
@@ -45,13 +38,22 @@ import ExperimentC from "@/pages/ExperimentC";
 import GlyphIntroduction from "@/pages/GlyphIntroduction";
 import ExperimentBIntroduction from "@/pages/ExperimentBIntroduction";
 import ExperimentBTraining from "@/pages/ExperimentBTraining";
+import ExperimentCTraining from "@/pages/ExperimentCTraining";
 
 export default {
   name: "MainPage",
-  components: {ExperimentBTraining, ExperimentBIntroduction, GlyphIntroduction, ExperimentC, Test, ExperimentB},
+  components: {
+    ExperimentCTraining,
+    ExperimentBTraining,
+    ExperimentBIntroduction,
+    GlyphIntroduction,
+    ExperimentC,
+    Test,
+    ExperimentB
+  },
   data() {
     return {
-      activeTab: 'ExperimentC'
+      activeTab: 'ExperimentCTraining'
     };
   },
   mounted() {

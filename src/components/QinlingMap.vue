@@ -8,6 +8,7 @@
 import qinling from '@/assets/js/qinling';
 import {drawPeaGlyph, drawStripeGlyph} from "@/assets/js/drawNewGlyph";
 import * as d3 from 'd3';
+import {getCurrentTime} from "@/assets/js/tool";
 
 export default {
   name: "QinlingMap",
@@ -51,7 +52,8 @@ export default {
       allGlyph: [],
       curClickGlyph: '',
       curClickGlyphData: {},
-      regionInfo: []
+      regionInfo: [],
+      isExperimentC: false
     };
   },
   props: ['updateData'],
@@ -112,6 +114,7 @@ export default {
       // console.log(result)
       return result
     },
+    // 点击获取到它的数据
     glyphClick(outline, data) {
       this.curClickGlyph = outline;
       this.curClickGlyphData = data;
@@ -186,6 +189,16 @@ export default {
     this.$bus.$on('resetCurrentExperimentC', () => {
       this.createGlyph(this.updateData)
     });
+    // 判断是否切换到实验二页面
+    this.$bus.$on('saveCStartTime', () => {
+      this.isExperimentC = true;
+      // 切换到这个页面的时候保存一下生成的数据
+      let d = [];
+      this.regionInfo.forEach((item) => {
+        d.push(item.data);
+      });
+      this.$bus.$emit('updateExperimentCShowData', d);
+    });
   },
   watch: {
     updateData: {
@@ -202,15 +215,17 @@ export default {
           let d = [];
           newVal.forEach((item) => {
             d.push(item.data);
-          })
-          this.$bus.$emit('updateExperimentCShowData', d);
+          });
+          if (this.isExperimentC) {
+            this.$bus.$emit('updateExperimentCShowData', d);
+          }
         }
       }
     },
     curClickGlyphData: {
       deep: true,
       handler(newVal) {
-        if (newVal) {
+        if (newVal && this.updateData.isDemo === false) {
           this.$bus.$emit('clickChooseData', newVal);
         }
       }

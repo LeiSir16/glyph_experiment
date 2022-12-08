@@ -149,6 +149,8 @@ export default {
     this.$bus.$on('saveCStartTime', () => {
       if (!this.showGlyph.isDemo) {
         this.$set(this.ExperimentCData, 'startTime', getCurrentTime());
+        // 第一个实验的开始时间在切换到这个页面时就记录了
+        this.startTime = getCurrentTime();
       }
     });
     // 提交结果的时候保存该实验结束时间
@@ -201,6 +203,7 @@ export default {
         // 存储第二大数据
         this.correctRegion = this.curShowData[1];
         // 在保存数据的时候一定保证用户选择了区域
+        console.log('save1', this.curShowData)
         if (this.chooseRegion.data) {
           this.isRight = this.correctRegion.index === this.chooseRegion.index;
           this.submitResultTime = getCurrentTime();
@@ -217,6 +220,8 @@ export default {
     this.$bus.$on('clickChooseData', (d) => {
       if (!this.showGlyph.isDemo) {
         this.chooseRegion = d;
+        console.log('记录数据了');
+        console.log(this.chooseRegion)
       }
     });
   },

@@ -51,6 +51,7 @@ export default {
       allGlyph: [],
       curClickGlyph: '',
       curClickGlyphData: {},
+      regionInfo: []
     };
   },
   props: ['updateData'],
@@ -65,29 +66,34 @@ export default {
     },
     randomGetRegion(num, threshold) {
       let result = [];
+      let f = this.features;
       if (this.features) {
         // 防止无限地查找下去
         let lastLength = 0, times = 0, totalNum = 0, tryNum = 30;
-        while (result.length < num && totalNum < 100) {
+        while (result.length < num && totalNum < 418) {
           if (times > 100) {
             // 如果找了100次还没找到就置空result重新查找
             result = [];
+            f = this.features;
             // 如果置空了30次还没找到就表示找不到了
             totalNum++;
             // console.log('totalNum', totalNum)
             continue;
           }
           for (let i = 0; i < tryNum; i++) {
-            let index = Math.floor(Math.random() * this.features.length);
-            let region = this.features[index].properties.省C[0];
+            let index = Math.floor(Math.random() * f.length);
+            let region = f[index].properties.省C[0];
             let data = this.glyphData[region];
-            let centerPosition = this.path.centroid(this.features[index]);
+            let centerPosition = this.path.centroid(f[index]);
             let regionInfo = {
               centerPosition: centerPosition,
               data: data
             }
             if (this.IsValid(result, regionInfo, threshold)) {
               result.push(regionInfo);
+              // 每次都从剩下的区域中选择
+              // 直接pop的话会修改this.features数组
+              f = f.slice(0, index).concat(f.slice(index + 1, f.length));
               break;
             }
           }
@@ -118,19 +124,19 @@ export default {
         this.allGlyph = [];
       }
       if (value.glyph === 1) {
-        let regionInfo = this.randomGetRegion(value.regionNum, this.peaGlyphCondition.size);
-        for (const regionInfoElement of regionInfo) {
-          let g = drawPeaGlyph(this.mapSvg, this.peaGlyphCondition, regionInfoElement.data, regionInfoElement.centerPosition, this.$store.state.qinlingColorEncoding)
+        this.regionInfo = this.randomGetRegion(value.regionNum, this.peaGlyphCondition.size);
+        for (const regionInfoElement of this.regionInfo) {
+          let g = drawPeaGlyph(this.mapSvg, this.peaGlyphCondition, regionInfoElement.data, regionInfoElement.centerPosition, this.$store.state.qinlingColorEncoding, this.glyphClick)
           this.allGlyph.push(g);
         }
       } else {
-        let regionInfo = this.randomGetRegion(value.regionNum, this.stripeGlyphCondition.size);
-        for (const regionInfoElement of regionInfo) {
+        this.regionInfo = this.randomGetRegion(value.regionNum, this.stripeGlyphCondition.size);
+        for (const regionInfoElement of this.regionInfo) {
           let g = drawStripeGlyph(this.mapSvg, this.stripeGlyphCondition, regionInfoElement.data, regionInfoElement.centerPosition, this.$store.state.qinlingColorEncoding, this.glyphClick)
           this.allGlyph.push(g);
         }
       }
-    }
+    },
   },
   mounted() {
     const vc = this;
@@ -176,8 +182,9 @@ export default {
         this.curClickGlyphData = {};
       }
     });
-    this.$bus.$on('updateMapShowData', () => {
-      this.createGlyph(this.updateData);
+    // 重新生成Glyph
+    this.$bus.$on('reShowData', () => {
+      this.createGlyph(this.updateData)
     })
   },
   watch: {
@@ -185,7 +192,27 @@ export default {
       deep: true,
       handler(newVal, oldVal) {
         this.createGlyph(newVal);
-        console.log('更新')
+      }
+    },
+    regionInfo: {
+      deep: true,
+      handler(newVal, oldVal) {
+        // 每次数据更新的时候也在experimenC中更新数据并记录该实验开始时间
+        if (newVal.length !== 0) {
+          let d = [];
+          newVal.forEach((item) => {
+            d.push(item.data);
+          })
+          this.$bus.$emit('updateExperimentCShowData', d);
+        }
+      }
+    },
+    curClickGlyphData: {
+      deep: true,
+      handler(newVal) {
+        if (newVal) {
+          this.$bus.$emit('clickChooseData', newVal);
+        }
       }
     }
   },

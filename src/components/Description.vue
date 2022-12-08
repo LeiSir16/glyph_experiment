@@ -54,7 +54,7 @@
         </el-row>
       </template>
     </template>
-    <template v-else-if="desCondition&&(desCondition.experiment === 3)">
+    <template v-else-if="desCondition&&(desCondition.experiment === 3||desCondition.experiment === -3)">
       <!--如果是peaglyph-->
       <template v-if="desCondition.glyph === 1">
         <el-row>

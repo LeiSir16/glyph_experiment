@@ -76,7 +76,7 @@ const mutations = {
                 break;
             case 2:
                 state.ExperimentBData = data.ExperimentData;
-                console.log(this.state.ExperimentBData)
+                // console.log(this.state.ExperimentBData)
                 break;
             case 3:
                 break
@@ -91,7 +91,7 @@ const mutations = {
                 state.ExperimentCForm = data.data;
                 break;
         }
-        console.log(state.ExperimentCDemo);
+        // console.log(state.ExperimentCDemo);
     }
 };
 const getters = {}
@@ -302,7 +302,8 @@ const state = {
     ExperimentBData: {},
     Test: [],
     ExperimentCDemo: [],
-    ExperimentCForm: []
+    ExperimentCForm: [],
+
 }
 
 // 创建store

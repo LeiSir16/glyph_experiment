@@ -24,7 +24,6 @@
         </el-tab-pane>
         <el-tab-pane name="ExperimentCTraining">
           <span slot="label" class="navigation">实验二(实验练习)</span>
-          实验二实验练习
         </el-tab-pane>
         <el-tab-pane name="ExperimentC">
           <span slot="label" class="navigation">实验二(正式实验)</span>
@@ -65,6 +64,7 @@ export default {
           this.$bus.$emit('saveBStartTime');
           break;
         case 'ExperimentC':
+          this.$bus.$emit('saveCStartTime');
           break;
       }
     },

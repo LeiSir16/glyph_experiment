@@ -41,7 +41,7 @@
       <!-- 问题描述-->
       <el-row type="flex" align="middle">
         <el-col :span="23" :offset="1" class="task_description">
-          请从左侧秦岭地图上展示的图形中选择<span class="under_line">温度值第二大</span>的图形
+          请从左侧秦岭地图上展示的图形中选择<span class="under_line">{{ ExperimentCAttr.chineseName }}第二大</span>的图形
         </el-col>
       </el-row>
       <!--说明-->
@@ -56,9 +56,13 @@
         <el-col :span="24">
           <el-button-group>
             <el-button plain size="small" icon="el-icon-refresh-left" @click="resetChoose">重新选择</el-button>
-            <el-button type="primary" size="small">保存结果</el-button>
-            <el-button type="success" size="small" @click="nextStep">下一步<i
+            <el-button type="primary" size="small" @click="experimentCSave">保存结果</el-button>
+            <el-button type="success" size="small" @click="nextStep" v-show="experimentCIsNext"
+                       :disabled="!experimentCIsSave">下一步<i
                 class="el-icon-arrow-right el-icon--right"></i></el-button>
+            <el-button type="danger" size="small" v-show="!experimentCIsNext" :disabled="!experimentCIsSave"
+                       @click="submitResult">提交结果
+            </el-button>
           </el-button-group>
         </el-col>
       </el-row>
@@ -75,9 +79,12 @@ export default {
   data() {
     return {
       isNext: true,
+      experimentCIsNext: true,
+      experimentCIsSave: false,
       differenceSlider: 0,
       experimentBChoose: "",
-      isSave: false
+      isSave: false,
+      ExperimentCAttr: '',
     };
   },
   methods: {
@@ -97,6 +104,8 @@ export default {
         this.$bus.$emit('experimentBResultLocal', getCurrentTime());
       } else if (this.taskCondition.experiment === -2) {
         this.$bus.$emit('experimentBTrainingResultLocal');
+      } else if (this.taskCondition.experiment === 3) {
+        this.$bus.$emit('experimentCResultLocal');
       }
     },
     /**
@@ -161,7 +170,34 @@ export default {
     // 重置地图上glyph地选择
     resetChoose() {
       this.$bus.$emit('resetGlyphChoose');
+    },
+    // 实验二随机生成一种属性
+    experimentCRandomAttr() {
+      let qinlingAttr = this.$store.state.qinlingColorName;
+      let qinlingAttrKeys = Object.keys(qinlingAttr);
+      let index = Math.floor(qinlingAttrKeys.length * Math.random());
+      this.ExperimentCAttr = {
+        attr: qinlingAttrKeys[index],
+        chineseName: qinlingAttr[qinlingAttrKeys[index]]
+      };
+    },
+    // 实验二的保存结果按钮
+    experimentCSave() {
+      this.$confirm('是否确定保存您的选择的结果?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+
+        this.$bus.$emit('saveExperimentCData');
+      }).catch(() => {
+        console.log("已取消保存");
+      });
     }
+  },
+  created() {
+    // 初始化随机生成一种属性
+    this.experimentCRandomAttr();
   },
   mounted() {
     this.$bus.$on('resetValue', () => {
@@ -185,6 +221,12 @@ export default {
         this.isSave = true;
       }
     });
+
+    this.$bus.$on('enableNextStepExperimentC', () => {
+      if (this.taskCondition && this.taskCondition.experiment === 3) {
+        this.experimentCIsSave = true;
+      }
+    });
   },
   watch: {
     taskCondition: {
@@ -194,11 +236,7 @@ export default {
         if (newVal && (newVal.experiment === 2 || newVal.experiment === -2)) {
           // 找出大于等于阈值的属性
           this.experimentBChoose = this.randomShowAttributes(newVal);
-          if (newVal.active === newVal.singleExperiment * 2 - 1) {
-            this.isNext = false;
-          } else {
-            this.isNext = true;
-          }
+          this.isNext = newVal.active !== newVal.singleExperiment * 2 - 1;
           // 当进入到一个新的小实验时要禁用下一步按钮并将数值选择框的值归零
           if (oldVal) {
             if (newVal.active !== oldVal.active) {
@@ -209,6 +247,25 @@ export default {
             this.isSave = false;
             this.differenceSlider = 0;
           }
+        } else if (newVal && (newVal.experiment === 3)) {
+          this.experimentCIsNext = newVal.active !== newVal.singleExperiment * 2 - 1;
+          if (oldVal) {
+            if (newVal.active !== oldVal.active) {
+              this.experimentCIsSave = false;
+              this.experimentCRandomAttr();
+            }
+          } else {
+            this.experimentCIsSave = false;
+            this.experimentCRandomAttr();
+          }
+        }
+      }
+    },
+    ExperimentCAttr: {
+      deep: true,
+      handler(newVal, oldVal) {
+        if (newVal) {
+          this.$bus.$emit('updateExperimentCRandomChooseAttr', newVal);
         }
       }
     }

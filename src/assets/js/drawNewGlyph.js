@@ -48,7 +48,7 @@ let attrChinese = {
  * @param data      数据
  * @param position  绘制的位置
  */
-export function drawPeaGlyph(svgs, condition, data, position, qinlingcolor) {
+export function drawPeaGlyph(svgs, condition, data, position, qinlingcolor, glyphClickCallback) {
     let uniformId = 'peaGlyph' + '-' + data.index + '-' + nanoid();
     let radius = (condition.size / 2 - condition.outline_offset - condition.outline_dis - condition.center_offset) / (condition.circle_num * 2) - condition.thickness / 2;
     // console.log(radius)
@@ -61,7 +61,7 @@ export function drawPeaGlyph(svgs, condition, data, position, qinlingcolor) {
     let mouseOutline = createSvgOutline(peaGlyph, uniformId, condition.size, position);
     peaGlyph.on('click', () => {
         mouseOutline.select('rect').attr('stroke-opacity', 1);
-        console.log(peaGlyph.data()[0]);
+        glyphClickCallback(mouseOutline, peaGlyph.data()[0]);
     });
 
     // 创建外轮廓

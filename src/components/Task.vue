@@ -5,7 +5,7 @@
       <!-- 问题描述-->
       <el-row type="flex" align="middle">
         <el-col :span="23" :offset="1" class="task_description">
-          请估算左侧A和B两个图形中<span class="under_line">{{ $store.state.ssiColorName[experimentBChoose] }}</span>的差值
+          请估算左侧A和B两个图标中<span class="under_line">{{ $store.state.ssiColorName[experimentBChoose] }}</span>的差值
         </el-col>
       </el-row>
       <!--说明-->
@@ -41,7 +41,7 @@
       <!-- 问题描述-->
       <el-row type="flex" align="middle">
         <el-col :span="23" :offset="1" class="task_description">
-          请从左侧秦岭地图上展示的图形中选择<span class="under_line">{{ ExperimentCAttr.chineseName }}第二大</span>的图形
+          请从左侧地图上展示的一系列圆形图标中选择具有<span class="under_line"><span style="color: red">第二大</span>{{ ExperimentCAttr.chineseName }}值</span>的图标
         </el-col>
       </el-row>
       <!--说明-->

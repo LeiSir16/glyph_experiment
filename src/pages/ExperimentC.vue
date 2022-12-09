@@ -161,7 +161,7 @@ export default {
         this.$set(this.ExperimentCData, 'endTime', getCurrentTime());
         this.saveCurrentSmallExperiment();
         sessionStorage.setItem('ExperimentC', JSON.stringify(this.ExperimentCData));
-        console.log(JSON.stringify(this.ExperimentCData))
+        // console.log(JSON.stringify(this.ExperimentCData))
         // 判断是否存储成功
         if (JSON.parse(sessionStorage.getItem('ExperimentC')).startTime === this.ExperimentCData.startTime) {
           saveAsJson(JSON.parse(sessionStorage.getItem('ExperimentC')), 3, () => {

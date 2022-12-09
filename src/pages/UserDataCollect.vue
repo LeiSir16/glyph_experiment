@@ -25,7 +25,7 @@
                 <el-input v-model="userInfo.name" placeholder="请输入您的姓名" clearable></el-input>
               </el-form-item>
               <el-form-item label="性别">
-                <el-radio-group v-model="userInfo.sex">
+                <el-radio-group v-model="userInfo.gender">
                   <el-radio label="男"></el-radio>
                   <el-radio label="女"></el-radio>
                 </el-radio-group>
@@ -53,7 +53,7 @@ export default {
     return {
       userInfo: {
         sId: '',
-        sex: '男',
+        gender: '男',
         name: '',
         age: 23
       },

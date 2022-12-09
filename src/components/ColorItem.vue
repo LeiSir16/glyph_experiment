@@ -11,7 +11,7 @@
       </svg>
     </el-col>
     <el-col :span="19" :offset="experiment === 2 ? 0 : 1">
-      {{ encodingName }}<span class="under_line max_des" v-show="experiment === 2">    (最大为{{ showMax }})</span>
+      {{ encodingName }}<span class="under_line max_des" v-show="experiment === 2">    (最大值为{{ showMax }})</span>
     </el-col>
   </el-row>
 </template>
@@ -53,7 +53,8 @@ export default {
         } else {
           value = qinlingMax[englishName].max;
         }
-        show = value.toFixed(2) + qinlingMax[englishName].units;
+        // 最值四舍五入显示
+        show = Math.round(value) + qinlingMax[englishName].units;
       }
 
       return show;

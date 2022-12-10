@@ -67,7 +67,7 @@ export default {
   components: {QinlingMap, Task, Description, ColorLegend},
   data() {
     return {
-      childExperimentNum: 2,
+      childExperimentNum: 6,
       glyphType: [1, 2],
       experimentType: [],
       curActive: 0,
@@ -203,7 +203,6 @@ export default {
         // 存储第二大数据
         this.correctRegion = this.curShowData[1];
         // 在保存数据的时候一定保证用户选择了区域
-        console.log('save1', this.curShowData)
         if (this.chooseRegion.data) {
           this.isRight = this.correctRegion.index === this.chooseRegion.index;
           this.submitResultTime = getCurrentTime();
@@ -220,8 +219,6 @@ export default {
     this.$bus.$on('clickChooseData', (d) => {
       if (!this.showGlyph.isDemo) {
         this.chooseRegion = d;
-        console.log('记录数据了');
-        console.log(this.chooseRegion)
       }
     });
   },

@@ -75,6 +75,8 @@ export default {
     });
     this.$store.dispatch('readExperimentQinLingData', 1);
     this.$store.dispatch('readExperimentQinLingData', 2);
+    this.$store.dispatch('readExperimentCPreset', 1);
+    this.$store.dispatch('readExperimentCPreset', 2);
   },
   mounted() {
     // 自动生成编号

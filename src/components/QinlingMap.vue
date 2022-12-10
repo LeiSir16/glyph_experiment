@@ -18,7 +18,7 @@ export default {
         1500, 780
       ],
       peaGlyphCondition: {
-        size: 170,
+        size: 180,
         outline_thickness: 1,
         outline_offset: 0,
         circle_num: 40,
@@ -27,7 +27,7 @@ export default {
         thickness: 0.5
       },
       stripeGlyphCondition: {
-        size: 170,
+        size: 180,
         iRadius: 2.5,
         maxRadius: 10,
         sectorInterval: 3,
@@ -109,7 +109,9 @@ export default {
         }
       }
       if (result.length < num) {
-        console.log('找不到')
+        console.log('找不到');
+        let index = Math.floor(Math.random() * this.presetGlyphData.length);
+        result = this.presetGlyphData[index];
       }
       // console.log(result)
       return result
@@ -237,6 +239,13 @@ export default {
         return this.$store.state.ExperimentCDemo;
       } else {
         return this.$store.state.ExperimentCForm;
+      }
+    },
+    presetGlyphData() {
+      if (this.updateData.isDemo) {
+        return this.$store.state.ExperimentCDemoPreset;
+      } else {
+        return this.$store.state.ExperimentCFormPreset;
       }
     }
   }

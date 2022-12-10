@@ -148,8 +148,6 @@ export default {
       this.experimentType.forEach((item) => {
         sum += item.cur_num;
       });
-      console.log(this.experimentType)
-      console.log(sum)
       return sum >= this.childExperimentNum * this.glyphType.length - 1;
     },
     resetCurrent() {
@@ -166,7 +164,6 @@ export default {
       }
       this.$set(this.experimentType[0], 'cur_num', 0);
       this.$set(this.experimentType[1], 'cur_num', 0);
-      console.log(this.experimentType)
     }
   },
   watch: {

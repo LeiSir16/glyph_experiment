@@ -1,6 +1,7 @@
 import * as d3 from 'd3';
 import {nanoid} from "nanoid";
 import {angle_radian, cal_total_strip} from "@/assets/js/tool";
+import lo from "dayjs/esm/locale/lo";
 
 let attrChinese = {
     tem: {
@@ -64,6 +65,7 @@ export function drawPeaGlyph(svgs, condition, data, position, qinlingcolor, glyp
         glyphClickCallback(mouseOutline, peaGlyph.data()[0]);
     });
 
+
     // 创建外轮廓
     let out_line = peaGlyph.append("g")
         .attr("class", uniformId + 'outline')
@@ -105,8 +107,67 @@ export function drawPeaGlyph(svgs, condition, data, position, qinlingcolor, glyp
             let angle = 360 / attr_num;
             return "translate(" + position[0] + "," + position[1] + ") rotate(" + angle * i + ")";
         });
-
-
+    // 创建豌豆荚
+    let wandou = peaGlyph.append('g')
+        .attr('class', uniformId + "_" + 'wandoujia');
+    let allWandouRight = wandou.append('g')
+        .attr('class', uniformId + "_" + 'right')
+        .datum((d) => {
+            return d;
+        });
+    let allWandouLeft = wandou.append('g')
+        .attr('class', uniformId + "_" + 'left')
+        .datum((d) => {
+            return d;
+        });
+    let jiaArcLeft = allWandouLeft.selectAll('path')
+        .data((d) => {
+            return d.data;
+        })
+        .join('path')
+        .attr('d', () => {
+            let angle = 60;
+            let newPath = d3.path();
+            let startAngle = 180 - angle / 2;
+            let endAngle = startAngle + angle;
+            let radius = condition.size / 4 / Math.sin(angle_radian(angle / 2));
+            let x = position[0] + Math.cos(angle_radian(angle / 2)) * radius;
+            let y = position[1] - condition.size / 4;
+            newPath.arc(x, y, radius, angle_radian(startAngle), angle_radian(endAngle), false)
+            return newPath;
+        })
+        .attr('fill', 'green')
+        .attr('fill-opacity', .3)
+        .attr('transform', function (d, i) {
+            let parent = d3.select(this.parentNode).data()[0]
+            let attr_num = parent.data.length;
+            let singleAngle = (360 / attr_num) * i;
+            return 'rotate(' + singleAngle + "," + position[0] + "," + position[1] + ")";
+        });
+    let jiaArcRight = allWandouRight.selectAll('path')
+        .data((d) => {
+            return d.data;
+        })
+        .join('path')
+        .attr('d', function (d, i) {
+            let angle = 30;
+            let newPath = d3.path();
+            let startAngle = 0 - angle / 2;
+            let endAngle = startAngle + angle;
+            let radius = condition.size / 4 / Math.sin(angle_radian(angle / 2));
+            let x = position[0] - Math.cos(angle_radian(angle / 2)) * radius;
+            let y = position[1] - condition.size / 4;
+            newPath.arc(x, y, radius, angle_radian(startAngle), angle_radian(endAngle), false)
+            return newPath;
+        })
+        .attr('fill', 'green')
+        .attr('fill-opacity', .3)
+        .attr('transform', function (d, i) {
+            let parent = d3.select(this.parentNode).data()[0]
+            let attr_num = parent.data.length;
+            let singleAngle = (360 / attr_num) * i;
+            return 'rotate(' + singleAngle + "," + position[0] + "," + position[1] + ")";
+        });
     let glyph_circles = glyph_attr.selectAll("g")
         .data(function (d) {
             // 获取指定数量小球对应的每个小球应该编码的值的大小

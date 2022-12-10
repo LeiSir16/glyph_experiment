@@ -48,7 +48,7 @@
       <el-row type="flex" align="middle" class="text shuoming">
         <el-col :span="23" :offset="1">
           <span class="under_line">说明：</span>请根据任务在地图上<span
-            class="under_line">点击选择图形</span>，并点击<span class="under_line">【保存结果】</span>按钮保存结果，如需重新选择请点击<span
+            class="under_line">点击选择图标</span>，并点击<span class="under_line">【保存结果】</span>按钮保存结果，如需重新选择请点击<span
             class="under_line">【重新选择】</span>按钮，保存结果后点击<span class="under_line">【下一步】</span>进行后续实验
         </el-col>
       </el-row>

@@ -139,6 +139,11 @@ export default {
     });
     // 保存当前选择的结果这里只提示信息
     this.$bus.$on('saveExperimentCTrainingData', () => {
+      // this.$message({
+      //   message: '保存成功!',
+      //   type: 'success',
+      //   duration: 1000
+      // });
       this.$bus.$emit('enableNextStepExperimentCTraining');
     });
   },

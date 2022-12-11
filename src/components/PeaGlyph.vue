@@ -5,6 +5,7 @@
 <script>
 import * as d3 from 'd3'
 import {nanoid} from 'nanoid'
+import {angle_radian} from "@/assets/js/tool";
 
 export default {
   name: "PeaGlyph",
@@ -49,6 +50,70 @@ export default {
           .attr("fill-opacity", 0)
           .attr("stroke", "black")
           .attr("stroke-width", vc.outline_thickness);
+    },
+    // 创建豌豆荚
+    createPea(svgs) {
+      const vc = this;
+      let wandou = svgs.append('g')
+          .attr('class', 'wandoujia');
+      let allWandouRight = wandou.append('g')
+          .attr('class', 'wandoujia_right')
+          .datum((d) => {
+            return d;
+          });
+      let allWandouLeft = wandou.append('g')
+          .attr('class', 'wandoujia_left')
+          .datum((d) => {
+            return d;
+          });
+      let jiaArcLeft = allWandouLeft.selectAll('path')
+          .data((d) => {
+            return d.data;
+          })
+          .join('path')
+          .attr('d', () => {
+            let angle = 70;
+            let newPath = d3.path();
+            let startAngle = 180 - angle / 2;
+            let endAngle = startAngle + angle;
+            let radius = vc.svg_size.width / 4 / Math.sin(angle_radian(angle / 2));
+            let x = vc.svg_size.width / 2 + Math.cos(angle_radian(angle / 2)) * radius;
+            let y = vc.svg_size.width / 2 - vc.svg_size.width / 4;
+            newPath.arc(x, y, radius, angle_radian(startAngle), angle_radian(endAngle), false)
+            return newPath;
+          })
+          .attr('fill', '#25a924')
+          .attr('fill-opacity', .2)
+          .attr('transform', function (d, i) {
+            let parent = d3.select(this.parentNode).data()[0]
+            let attr_num = parent.data.length;
+            let singleAngle = (360 / attr_num) * i;
+            return 'rotate(' + singleAngle + "," + vc.svg_size.width / 2 + "," + vc.svg_size.height / 2 + ")";
+          });
+      let jiaArcRight = allWandouRight.selectAll('path')
+          .data((d) => {
+            return d.data;
+          })
+          .join('path')
+          .attr('d', function (d, i) {
+            let angle = 50;
+            let newPath = d3.path();
+            let startAngle = 0 - angle / 2;
+            let endAngle = startAngle + angle;
+            let radius = vc.svg_size.width / 4 / Math.sin(angle_radian(angle / 2));
+            let x = vc.svg_size.width / 2 - Math.cos(angle_radian(angle / 2)) * radius;
+            let y = vc.svg_size.width / 2 - vc.svg_size.width / 4;
+            newPath.arc(x, y, radius, angle_radian(startAngle), angle_radian(endAngle), false)
+            return newPath;
+          })
+          .attr('fill', '#25a924')
+          .attr('fill-opacity', .2)
+          .attr('transform', function (d, i) {
+            let parent = d3.select(this.parentNode).data()[0]
+            let attr_num = parent.data.length;
+            let singleAngle = (360 / attr_num) * i;
+            return 'rotate(' + singleAngle + "," + vc.svg_size.width / 2 + "," + vc.svg_size.height / 2 + ")";
+          });
     },
     // 创建所有的circle
     create_all_circles(glyph_svg) {
@@ -261,6 +326,7 @@ export default {
   },
   mounted() {
     this.create_svgs();
+    this.createPea(this.glyph_svg)
     this.create_outline(this.glyph_svg);
     this.create_all_circles(this.glyph_svg);
   },

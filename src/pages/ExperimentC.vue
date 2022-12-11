@@ -207,6 +207,11 @@ export default {
           this.isRight = this.correctRegion.index === this.chooseRegion.index;
           this.submitResultTime = getCurrentTime();
           this.$bus.$emit('enableNextStepExperimentC');
+          this.$message({
+            message: '保存成功!',
+            type: 'success',
+            duration: 1000
+          });
         } else {
           this.$message({
             message: '请根据任务选择区域后再保存数据！',

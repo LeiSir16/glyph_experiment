@@ -65,48 +65,6 @@ export function drawPeaGlyph(svgs, condition, data, position, qinlingcolor, glyp
         glyphClickCallback(mouseOutline, peaGlyph.data()[0]);
     });
 
-
-    // 创建外轮廓
-    let out_line = peaGlyph.append("g")
-        .attr("class", uniformId + 'outline')
-        .append("circle")
-        .attr("cx", position[0])
-        .attr("cy", position[1])
-        .attr("r", condition.size / 2 - condition.outline_offset)
-        .attr("fill", "red")
-        .attr("fill-opacity", 0)
-        .attr("stroke", "white")
-        .attr("stroke-width", condition.outline_thickness);
-
-    let center = peaGlyph.append("g")
-        .attr("class", uniformId + 'center')
-        .append("circle")
-        .attr("cx", position[0])
-        .attr("cy", position[1])
-        .attr("r", 2)
-        .attr("fill", "yellow")
-        .attr("fill-opacity", 1);
-
-    // 绘制glyph的主体内容
-    let glyph_content = peaGlyph.append("g")
-        .attr("class", uniformId + "_" + "glyph_content");
-
-    // 创建每个属性
-    let glyph_attr = glyph_content.selectAll("g")
-        .data(function (d) {
-            return d.data;
-        })
-        .join("g")
-        .attr("class", function (d, i) {
-            // 类名为属性名之间的空格换为下划线
-            return uniformId + d.name;
-        })
-        .attr("transform", function (d, i) {
-            let parent = d3.select(this.parentNode).data()[0]
-            let attr_num = parent.data.length;
-            let angle = 360 / attr_num;
-            return "translate(" + position[0] + "," + position[1] + ") rotate(" + angle * i + ")";
-        });
     // 创建豌豆荚
     let wandou = peaGlyph.append('g')
         .attr('class', uniformId + "_" + 'wandoujia');
@@ -136,8 +94,8 @@ export function drawPeaGlyph(svgs, condition, data, position, qinlingcolor, glyp
             newPath.arc(x, y, radius, angle_radian(startAngle), angle_radian(endAngle), false)
             return newPath;
         })
-        .attr('fill', 'green')
-        .attr('fill-opacity', .3)
+        .attr('fill', '#25a924')
+        .attr('fill-opacity', .2)
         .attr('transform', function (d, i) {
             let parent = d3.select(this.parentNode).data()[0]
             let attr_num = parent.data.length;
@@ -160,14 +118,58 @@ export function drawPeaGlyph(svgs, condition, data, position, qinlingcolor, glyp
             newPath.arc(x, y, radius, angle_radian(startAngle), angle_radian(endAngle), false)
             return newPath;
         })
-        .attr('fill', 'green')
-        .attr('fill-opacity', .3)
+        .attr('fill', '#25a924')
+        .attr('fill-opacity', .2)
         .attr('transform', function (d, i) {
             let parent = d3.select(this.parentNode).data()[0]
             let attr_num = parent.data.length;
             let singleAngle = (360 / attr_num) * i;
             return 'rotate(' + singleAngle + "," + position[0] + "," + position[1] + ")";
         });
+
+    // 创建外轮廓
+    let out_line = peaGlyph.append("g")
+        .attr("class", uniformId + 'outline')
+        .append("circle")
+        .attr("cx", position[0])
+        .attr("cy", position[1])
+        .attr("r", condition.size / 2 - condition.outline_offset)
+        .attr("fill", "red")
+        .attr("fill-opacity", 0)
+        .attr("stroke", "black")
+        .attr('stroke-opacity', .7)
+        .attr("stroke-width", condition.outline_thickness);
+
+    let center = peaGlyph.append("g")
+        .attr("class", uniformId + 'center')
+        .append("circle")
+        .attr("cx", position[0])
+        .attr("cy", position[1])
+        .attr("r", 2)
+        .attr("fill", "black")
+        .attr("fill-opacity", 1);
+
+    // 绘制glyph的主体内容
+    let glyph_content = peaGlyph.append("g")
+        .attr("class", uniformId + "_" + "glyph_content");
+
+    // 创建每个属性
+    let glyph_attr = glyph_content.selectAll("g")
+        .data(function (d) {
+            return d.data;
+        })
+        .join("g")
+        .attr("class", function (d, i) {
+            // 类名为属性名之间的空格换为下划线
+            return uniformId + d.name;
+        })
+        .attr("transform", function (d, i) {
+            let parent = d3.select(this.parentNode).data()[0]
+            let attr_num = parent.data.length;
+            let angle = 360 / attr_num;
+            return "translate(" + position[0] + "," + position[1] + ") rotate(" + angle * i + ")";
+        });
+
     let glyph_circles = glyph_attr.selectAll("g")
         .data(function (d) {
             // 获取指定数量小球对应的每个小球应该编码的值的大小
@@ -319,7 +321,7 @@ export function drawStripeGlyph(svgs, condition, data, position, qinlingcolor, g
         .attr("cx", position[0])
         .attr("cy", position[1])
         .attr("r", 2)
-        .attr("fill", "yellow")
+        .attr("fill", "black")
         .attr("fill-opacity", 1);
 
     // 创建每个区域的分界线
@@ -622,7 +624,7 @@ function createSvgOutline(glyphSvg, id, size, position) {
         .attr('width', width)
         .attr('height', height)
         .attr('fill', 'transparent')
-        .attr('stroke', 'white')
+        .attr('stroke', 'black')
         .attr('stroke-width', thickness)
         .attr('stroke-opacity', 0);
     return rectComponent;

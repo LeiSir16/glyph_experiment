@@ -67,7 +67,7 @@ export default {
   components: {QinlingMap, Task, Description, ColorLegend},
   data() {
     return {
-      childExperimentNum: 6,
+      childExperimentNum: 2,
       glyphType: [1, 2],
       experimentType: [],
       curActive: 0,

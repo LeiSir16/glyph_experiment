@@ -301,8 +301,26 @@ export default {
     },
     // 重新训练
     resetTraining() {
-      this.curActive = 0;
+      this.experimentType.length = 0;
+      // 初始化实验数据
+      this.glyphType.forEach((glyph, index) => {
+        this.circleNum.forEach((type, i) => {
+          let e = {
+            // glyph类型
+            glyph: glyph,
+            // 实验类型 10 20 40
+            child_experiment: type,
+            // 该组实验最大数量
+            max_num: this.childExperimentNum,
+            // 当前已经进行了几次
+            cur_num: 0
+          }
+          this.experimentType.push(e);
+        });
+      });
       this.randomFlag = Math.random();
+      this.curActive = 0;
+      console.log(this.experimentType)
     }
   },
   created() {

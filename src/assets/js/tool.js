@@ -2,6 +2,7 @@ import * as d3 from 'd3';
 import axios from "axios";
 import dayjs from "dayjs";
 import {saveAs} from 'file-saver';
+import {nanoid} from "nanoid";
 
 /**
  * 弧度转为角度
@@ -277,7 +278,8 @@ export function getCurrentTime() {
 export function getId() {
     let date = dayjs();
     let format = 'YYYYMMDDHHmmss';
-    return date.format(format);
+    let id = nanoid();
+    return id + "_" + date.format(format);
 }
 
 /**

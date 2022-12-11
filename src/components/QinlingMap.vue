@@ -24,7 +24,7 @@ export default {
         circle_num: 40,
         outline_dis: 10,
         center_offset: 3,
-        thickness: 0.5
+        thickness: 0.2
       },
       stripeGlyphCondition: {
         size: 180,
@@ -32,8 +32,8 @@ export default {
         maxRadius: 10,
         sectorInterval: 3,
         svgEdgeDis: 0,
-        outlineThickness: 0.5,
-        divisionColor: 'white',
+        outlineThickness: 0.7,
+        divisionColor: 'black',
         divisionOpacity: 1,
         bgOpacity: 0,
         innerOpacity: 1,
@@ -72,8 +72,8 @@ export default {
       if (this.features) {
         // 防止无限地查找下去
         let lastLength = 0, times = 0, totalNum = 0, tryNum = 30;
-        while (result.length < num && totalNum < 418) {
-          if (times > 100) {
+        while (result.length < num && totalNum < 20) {
+          if (times > 20) {
             // 如果找了100次还没找到就置空result重新查找
             result = [];
             f = this.features;
@@ -155,7 +155,7 @@ export default {
         .attr('height', vc.mapSize[1])
         .attr('x', 0)
         .attr('y', 0)
-        .attr('fill', '#2d3b39')
+        .attr('fill', '#FAF0E6')
         .attr('fill-opacity', .5)
 
     // let projection = d3.geoMercator()
@@ -172,7 +172,7 @@ export default {
         .data(vc.features)
         .join('path')
         .attr('class', 'china')
-        .attr("fill", "#2d3b38")
+        .attr("fill", "#FAF0E6")
         .attr('d', vc.path)
         .attr('stroke', 'grey');
     this.createGlyph(this.updateData);

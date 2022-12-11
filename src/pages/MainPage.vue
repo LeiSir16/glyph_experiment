@@ -53,7 +53,7 @@ export default {
   },
   data() {
     return {
-      activeTab: 'ExperimentCTraining'
+      activeTab: 'ExperimentBGlyphIntroduction'
     };
   },
   mounted() {

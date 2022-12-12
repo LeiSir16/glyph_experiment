@@ -12,7 +12,7 @@
         </el-tab-pane>
         <el-tab-pane name="ExperimentB">
           <span slot="label" class="navigation">实验一(正式实验)</span>
-          <ExperimentB :child-experiment-num="1"/>
+          <ExperimentB :child-experiment-num="5"/>
         </el-tab-pane>
         <el-tab-pane name="ExperimentCTraining">
           <span slot="label" class="navigation">实验二(实验练习)</span>
@@ -53,7 +53,7 @@ export default {
   },
   data() {
     return {
-      activeTab: 'ExperimentC'
+      activeTab: 'ExperimentBGlyphIntroduction'
     };
   },
   mounted() {

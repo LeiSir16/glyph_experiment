@@ -53,7 +53,8 @@ export default {
       curClickGlyph: '',
       curClickGlyphData: {},
       regionInfo: [],
-      isExperimentC: false
+      isExperimentC: false,
+      stripeNum: 10,
     };
   },
   props: ['updateData'],
@@ -121,6 +122,39 @@ export default {
       this.curClickGlyph = outline;
       this.curClickGlyphData = data;
     },
+    // 设置glyph布局参数
+    changeLayerOut(glyph, childExperiment) {
+      // peaGlyph
+      if (glyph === 1) {
+        this.$set(this.peaGlyphCondition, 'circle_num', childExperiment);
+        if (childExperiment === 20) {
+          this.$set(this.peaGlyphCondition, 'center_offset', 4);
+        } else if (childExperiment === 40) {
+          this.$set(this.peaGlyphCondition, 'center_offset', 3);
+        } else if (childExperiment === 10) {
+          this.$set(this.peaGlyphCondition, 'center_offset', 5);
+        }
+      } else {
+        this.$set(this.stripeGlyphCondition, 'stripeNum', childExperiment);
+        if (childExperiment === 20) {
+          this.$set(this.stripeGlyphCondition, 'layerNum', 6);
+          this.$set(this.stripeGlyphCondition, 'stripeProportion', .083);
+          this.$set(this.stripeGlyphCondition, 'stripe_B_A', .07);
+          this.$set(this.stripeGlyphCondition, 'stripe_L_R', .15);
+        } else if (childExperiment === 40) {
+          this.$set(this.stripeGlyphCondition, 'layerNum', 10);
+          this.$set(this.stripeGlyphCondition, 'stripeProportion', 0.072);
+          this.$set(this.stripeGlyphCondition, 'stripe_B_A', 0.02);
+          this.$set(this.stripeGlyphCondition, 'stripe_L_R', 0.1);
+        } else if (childExperiment === 10) {
+          this.$set(this.stripeGlyphCondition, 'layerNum', 4);
+          this.$set(this.stripeGlyphCondition, 'stripeProportion', 0.117);
+          this.$set(this.stripeGlyphCondition, 'stripe_B_A', 0.08);
+          this.$set(this.stripeGlyphCondition, 'stripe_L_R', 0.12);
+        }
+      }
+      this.stripeNum = childExperiment;
+    },
     createGlyph(value) {
       if (this.allGlyph.length !== 0) {
         for (let allGlyphElement of this.allGlyph) {
@@ -128,13 +162,16 @@ export default {
         }
         this.allGlyph = [];
       }
+      this.changeLayerOut(value.glyph, value.circleNum);
       if (value.glyph === 1) {
+        // console.log(this.peaGlyphCondition);
         this.regionInfo = this.randomGetRegion(value.regionNum, this.peaGlyphCondition.size);
         for (const regionInfoElement of this.regionInfo) {
           let g = drawPeaGlyph(this.mapSvg, this.peaGlyphCondition, regionInfoElement.data, regionInfoElement.centerPosition, this.$store.state.qinlingColorEncoding, this.glyphClick)
           this.allGlyph.push(g);
         }
       } else {
+        // console.log(this.stripeGlyphCondition)
         this.regionInfo = this.randomGetRegion(value.regionNum, this.stripeGlyphCondition.size);
         for (const regionInfoElement of this.regionInfo) {
           let g = drawStripeGlyph(this.mapSvg, this.stripeGlyphCondition, regionInfoElement.data, regionInfoElement.centerPosition, this.$store.state.qinlingColorEncoding, this.glyphClick)
@@ -176,10 +213,6 @@ export default {
         .attr('d', vc.path)
         .attr('stroke', 'grey');
     this.createGlyph(this.updateData);
-
-    // console.log(this.glyphData)
-    // console.log(vc.path.centroid(vc.features[0]))
-    // console.log(vc.randomGetRegion(10, 150));
     this.$bus.$on('resetGlyphChoose', () => {
       if (this.curClickGlyph && this.curClickGlyphData) {
         this.curClickGlyph.select('rect').attr('stroke-opacity', 0);
@@ -207,6 +240,7 @@ export default {
       deep: true,
       handler(newVal, oldVal) {
         this.createGlyph(newVal);
+        console.log(newVal);
       }
     },
     regionInfo: {

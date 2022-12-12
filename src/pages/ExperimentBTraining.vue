@@ -320,7 +320,6 @@ export default {
       });
       this.randomFlag = Math.random();
       this.curActive = 0;
-      console.log(this.experimentType)
     }
   },
   created() {

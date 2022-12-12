@@ -77,11 +77,13 @@ export default {
     return {
       childExperimentNum: 1,
       glyphType: [1, 2],
+      circleNum: [10, 40],
       experimentType: [],
       curActive: 0,
       randomBegin: 1,
       showGlyph: {
         glyph: 2,
+        circleNum: 10,
         regionNum: 10,
         isDemo: true,
         active: 0,
@@ -91,32 +93,19 @@ export default {
   },
   created() {
     // 初始化实验数据
-    this.glyphType.forEach((glyph, index) => {
-      let e = {
-        // glyph类型
-        glyph: glyph,
-        // 该组实验最大数量
-        max_num: this.childExperimentNum,
-        // 当前已经进行了几次
-        cur_num: 0
-      }
-      this.experimentType.push(e);
-    });
+    this.initialExperiment();
     // 随机以一种glyph开始
     this.randomBegin = Math.random() > 0.5 ? 1 : 2;
     this.$set(this.showGlyph, 'glyph', this.randomBegin);
-    if (this.showGlyph.glyph === 1) {
-      this.curExperiment = this.experimentType[0];
-    } else {
-      this.curExperiment = this.experimentType[1];
-    }
+    // 随机选择一个实验显示
+    this.randomChooseExperiment(this.showGlyph.glyph);
   },
   mounted() {
     // 下一步的时候更新数据
     this.$bus.$on('nextSmallExperimentCTrainingPage', () => {
-      if (this.curActive < this.childExperimentNum * this.glyphType.length) {
+      if (this.curActive < this.childExperimentNum * this.glyphType.length * this.circleNum.length - 1) {
         this.curActive++;
-        if (this.curActive === this.childExperimentNum) {
+        if (this.curActive === this.childExperimentNum * this.circleNum.length) {
           let m = this.showGlyph.glyph === 1 ? 'PeaGlyph实验已完成！' : 'StripeGlyph实验已完成!';
           this.$notify({
             title: '提示',
@@ -139,62 +128,76 @@ export default {
     });
     // 保存当前选择的结果这里只提示信息
     this.$bus.$on('saveExperimentCTrainingData', () => {
-      // this.$message({
-      //   message: '保存成功!',
-      //   type: 'success',
-      //   duration: 1000
-      // });
       this.$bus.$emit('enableNextStepExperimentCTraining');
     });
   },
   methods: {
-    isAllComplete() {
-      let sum = 0;
-      this.experimentType.forEach((item) => {
-        sum += item.cur_num;
+    initialExperiment() {
+      // 先判断experiment是不是空，不是空的要置空再push
+      let tmp = [];
+      this.glyphType.forEach((glyph, index) => {
+        this.circleNum.forEach((type, i) => {
+          let e = {
+            // glyph类型
+            glyph: glyph,
+            // 实验类型 20 40
+            child_experiment: type,
+            // 该组实验最大数量
+            max_num: this.childExperimentNum,
+            // 当前已经进行了几次
+            cur_num: 0
+          }
+          tmp.push(e);
+        });
       });
-      return sum >= this.childExperimentNum * this.glyphType.length - 1;
+      this.experimentType = tmp;
+    },
+    randomChooseExperiment(glyph) {
+      if (this.experimentType.length) {
+        let childExperiment = this.experimentType.filter((item) => {
+          return item.glyph === glyph && item.cur_num < item.max_num;
+        });
+        // 说明这个glyph的实验已经全部完成该切换下一个glyph的实验
+        if (childExperiment.length === 0) {
+          let nextGlyph = glyph === 1 ? 2 : 1;
+          this.$set(this.showGlyph, 'glyph', nextGlyph);
+          let nextExperiment = this.experimentType.filter((item) => {
+            return item.glyph === nextGlyph && item.cur_num < item.max_num;
+          });
+          let index = Math.floor(Math.random() * nextExperiment.length);
+          this.curExperiment = nextExperiment[index];
+          // 将选中的实验的index加一
+          nextExperiment[index].cur_num++;
+          this.$set(this.showGlyph, 'circleNum', this.curExperiment.child_experiment);
+        } else {
+          let index = Math.floor(Math.random() * childExperiment.length);
+          this.curExperiment = childExperiment[index];
+          // 将选中的实验的index加一
+          childExperiment[index].cur_num++;
+          this.$set(this.showGlyph, 'circleNum', this.curExperiment.child_experiment);
+        }
+      }
     },
     resetCurrent() {
       this.$bus.$emit('resetCurrentExperimentC');
     },
     resetTraining() {
+      // 初始化实验数据
+      this.initialExperiment();
       this.curActive = 0;
-      this.randomBegin = Math.random() > 0.5 ? 1 : 2;
-      this.$set(this.showGlyph, 'glyph', this.randomBegin);
-      if (this.showGlyph.glyph === 1) {
-        this.curExperiment = this.experimentType[0];
-      } else {
-        this.curExperiment = this.experimentType[1];
-      }
-      this.$set(this.experimentType[0], 'cur_num', 0);
-      this.$set(this.experimentType[1], 'cur_num', 0);
     }
   },
   watch: {
     curActive: {
       immediate: false,
       handler(newVal) {
-        if (this.showGlyph.glyph === 1) {
-          this.curExperiment = this.experimentType[0];
-        } else {
-          this.curExperiment = this.experimentType[1];
+        if (newVal === 0) {
+          this.randomBegin = Math.random() > 0.5 ? 1 : 2;
+          this.$set(this.showGlyph, 'glyph', this.randomBegin);
         }
-        if (this.curExperiment.cur_num < this.curExperiment.max_num - 1) {
-          // 需要切换glyph
-          this.$set(this.showGlyph, 'active', newVal);
-        } else {
-          let nextGlyphType = this.curExperiment.glyph === 1 ? 2 : 1;
-          this.$set(this.showGlyph, 'active', newVal);
-          this.$set(this.showGlyph, 'glyph', nextGlyphType);
-        }
-        for (let i = 0; i < this.experimentType.length; i++) {
-          if (this.experimentType[i].glyph === this.curExperiment.glyph) {
-            let tmp = this.experimentType[i].cur_num + 1;
-            this.$set(this.experimentType[i], 'cur_num', tmp);
-            break;
-          }
-        }
+        // 随机选择一个实验显示
+        this.randomChooseExperiment(this.showGlyph.glyph);
+        this.$set(this.showGlyph, 'active', newVal);
       }
     }
   },
@@ -204,7 +207,7 @@ export default {
         experiment: -3,
         glyph: this.showGlyph.glyph,
         value: 2,
-        max: 40
+        max: this.showGlyph.circleNum
       };
     },
     taskCondition() {
@@ -212,14 +215,14 @@ export default {
         experiment: -3,
         isDemo: this.showGlyph.isDemo,
         active: this.curActive,
-        singleExperiment: this.childExperimentNum,
+        singleExperiment: this.childExperimentNum * this.circleNum.length,
         data: '',
         // 每个单位编码的值
         circleValue: 0
       }
     },
     isEnd() {
-      return this.curActive === this.childExperimentNum * this.glyphType.length - 1;
+      return this.curActive === this.childExperimentNum * this.glyphType.length * this.circleNum.length - 1;
     }
   },
 }

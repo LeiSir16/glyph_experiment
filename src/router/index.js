@@ -3,6 +3,7 @@ import MainPage from "@/pages/MainPage";
 import UserDataCollect from "@/pages/UserDataCollect";
 
 const router = new VueRouter({
+    base:'/experiment/',
     routes: [
         {
             path: '/',

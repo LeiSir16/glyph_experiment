@@ -39,6 +39,11 @@
             </el-form>
           </el-col>
         </el-row>
+        <el-row>
+          <el-col :span="24" class="center">
+            <h3 style="color: red;font-weight: bolder">请在屏幕1920x1080分辨率，100%缩放的环境下完成实验，实验过程中请勿缩放浏览器</h3>
+          </el-col>
+        </el-row>
       </el-row>
     </el-main>
   </el-container>

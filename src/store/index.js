@@ -10,6 +10,7 @@ const actions = {
     // 加载实验所需要的数据 参数为对应的实验
     readExperimentData(context, data) {
         let path = '/data/ssi/2016_random.json';
+        // let path = '../assets/data/ssi/2016_random.json';
         axios.get(path).then(
             response => {
                 let dataName = '';
@@ -43,7 +44,7 @@ const actions = {
                 context.commit('ReadExperimentData', result);
             },
             error => {
-                console.log('数据加载失败！');
+                console.log('数据加载失败！', error.message);
             }
         );
     },
@@ -53,9 +54,11 @@ const actions = {
         if (type === 1) {
             // 读取demo数据
             path = '/data/qinling/weather_0.json';
+            // path = require('@/assets/data/qinling/weather_0.json');
         } else {
             // 读取正式实验数据
             path = '/data/qinling/weather_120.json';
+            // path = require('@/assets/data/qinling/weather_120.json');
         }
         axios.get(path).then(response => {
             context.commit('ReadExperimentQinLingData', {
@@ -71,9 +74,11 @@ const actions = {
         if (type === 1) {
             // 读取demo数据
             path = '/data/qinling/demo_weather_0.json';
+            // path = require('@/assets/data/qinling/demo_weather_0.json');
         } else {
             // 读取正式实验数据
             path = '/data/qinling/form_weather_120.json';
+            // path = require('@/assets/data/qinling/form_weather_120.json');
         }
         axios.get(path).then(response => {
             context.commit('ReadExperimentQinLingDataPreset', {

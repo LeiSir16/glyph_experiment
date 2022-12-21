@@ -8,6 +8,22 @@
               <qinling-map :update-data="showGlyph" ref="qinlingMap"/>
             </el-col>
           </el-row>
+          <el-row>
+            <el-col :span="3" :offset="9">
+              <el-statistic title="已完成实验数">
+                <template slot="formatter">
+                  {{ curExperimentNum }}
+                </template>
+              </el-statistic>
+            </el-col>
+            <el-col :span="3">
+              <el-statistic title="实验总数">
+                <template slot="formatter">
+                  {{ childExperimentNum * circleNum.length * glyphType.length }}
+                </template>
+              </el-statistic>
+            </el-col>
+          </el-row>
         </el-col>
         <el-col :span="4">
           <!--颜色图例部分-->
@@ -72,6 +88,7 @@ export default {
       circleNum: [10, 40],
       experimentType: [],
       curActive: 0,
+      curExperimentNum: 0,
       randomBegin: 1,
       showGlyph: {
         glyph: 2,
@@ -111,6 +128,7 @@ export default {
     this.$bus.$on('nextSmallExperimentCPage', () => {
       if (this.curActive < this.childExperimentNum * this.glyphType.length * this.circleNum.length - 1) {
         this.curActive++;
+        this.curExperimentNum++;
         if (!this.showGlyph.isDemo) {
           // 下一步的时候记录结束时间
           this.endTime = getCurrentTime();
@@ -168,6 +186,7 @@ export default {
           });
         }
       }
+      this.curExperimentNum++;
     })
     // console.log(this.$refs.qinlingMap.regionInfo)
     this.$bus.$on('updateExperimentCShowData', (d) => {

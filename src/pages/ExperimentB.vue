@@ -28,6 +28,22 @@
               {{ String.fromCharCode(index + 65) }}
             </el-col>
           </el-row>
+          <el-row style="margin-top: 5%">
+            <el-col :span="3" :offset="9">
+              <el-statistic title="已完成实验数">
+                <template slot="formatter">
+                  {{ curExperimentNum }}
+                </template>
+              </el-statistic>
+            </el-col>
+            <el-col :span="3">
+              <el-statistic title="实验总数">
+                <template slot="formatter">
+                  {{ childExperimentNum * circleNum.length * glyphType.length }}
+                </template>
+              </el-statistic>
+            </el-col>
+          </el-row>
         </el-col>
         <el-col :span="5">
           <!--颜色图例部分-->
@@ -92,6 +108,7 @@ export default {
     return {
       // 当前进行实验的编号 一共是childExperimentNum * circleNum.length * glyphType.length个实验
       curActive: 0,
+      curExperimentNum: 0,
       // 刚开始默认是peaGlyph的实验
       curShowGlyph: 1,
       // 当前进行的实验
@@ -361,6 +378,7 @@ export default {
         // 到此记录结束，将其存到整个实验的数据中
         this.storeCurrentExperiment();
         this.curActive++;
+        this.curExperimentNum++;
         if (this.curActive === this.childExperimentNum * this.circleNum.length) {
           let m = this.curShowGlyph === 1 ? 'PeaGlyph实验已完成！' : 'StripeGlyph实验已完成!';
           this.$notify({
@@ -396,6 +414,7 @@ export default {
           type: 'error'
         });
       }
+      this.curExperimentNum++;
     });
 
     this.$bus.$on('submitChoose', (result) => {

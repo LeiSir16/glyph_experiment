@@ -22,10 +22,10 @@
           <span slot="label" class="navigation">实验二(正式实验)</span>
           <ExperimentC/>
         </el-tab-pane>
-        <el-tab-pane name="Test">
-          <span slot="label" class="navigation">测试</span>
-          <Test/>
-        </el-tab-pane>
+<!--        <el-tab-pane name="Test">-->
+<!--          <span slot="label" class="navigation">测试</span>-->
+<!--          <Test/>-->
+<!--        </el-tab-pane>-->
       </el-tabs>
     </el-main>
   </el-container>

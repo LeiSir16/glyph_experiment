@@ -119,8 +119,20 @@ export default {
     },
     // 点击获取到它的数据
     glyphClick(outline, data) {
-      this.curClickGlyph = outline;
-      this.curClickGlyphData = data;
+      if (this.curClickGlyph && this.curClickGlyphData) {
+        this.$message({
+          message: '请点击【重新选择】按钮之后再进行选择!',
+          type: 'warning',
+          duration: 1500
+        });
+      } else {
+        // 如果没有数据才能选择
+        this.curClickGlyph = outline;
+        this.curClickGlyphData = data;
+        outline.select('rect').attr('stroke-opacity', 1);
+      }
+      console.log(this.curClickGlyph);
+      console.log(this.curClickGlyphData);
     },
     // 设置glyph布局参数
     changeLayerOut(glyph, childExperiment) {
@@ -240,7 +252,9 @@ export default {
       deep: true,
       handler(newVal, oldVal) {
         this.createGlyph(newVal);
-        console.log(newVal);
+        // 切换到下一个页面的时候重置选择的数据
+        this.curClickGlyph = '';
+        this.curClickGlyphData = {};
       }
     },
     regionInfo: {

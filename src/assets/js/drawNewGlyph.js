@@ -61,7 +61,7 @@ export function drawPeaGlyph(svgs, condition, data, position, qinlingcolor, glyp
     // 当鼠标点击的时候可以显示一个边框
     let mouseOutline = createSvgOutline(peaGlyph, uniformId, condition.size, position);
     peaGlyph.on('click', () => {
-        mouseOutline.select('rect').attr('stroke-opacity', 1);
+        // mouseOutline.select('rect').attr('stroke-opacity', 1);
         glyphClickCallback(mouseOutline, peaGlyph.data()[0]);
     });
 
@@ -308,7 +308,7 @@ export function drawStripeGlyph(svgs, condition, data, position, qinlingcolor, g
     let mouseOutline = createSvgOutline(stripeGlyph, uniformId, condition.size, position);
     // 点击回传数据
     stripeGlyph.on('click', () => {
-        mouseOutline.select('rect').attr('stroke-opacity', 1);
+        // mouseOutline.select('rect').attr('stroke-opacity', 1);
         glyphClickCallback(mouseOutline, stripeGlyph.data()[0]);
     });
 

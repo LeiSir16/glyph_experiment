@@ -8,24 +8,32 @@
         </el-tab-pane>
         <el-tab-pane name="ExperimentBTraining">
           <span slot="label" class="navigation">实验一(实验练习)</span>
-          <ExperimentBTraining :child-experiment-num="1"/>
+          <!--数据随机-->
+          <!--<ExperimentBTraining :child-experiment-num="1"/>-->
+          <!--数据不随机-->
+          <ExperimentBFixedDataTraining :child-experiment-num="1"/>
         </el-tab-pane>
         <el-tab-pane name="ExperimentB">
           <span slot="label" class="navigation">实验一(正式实验)</span>
-          <ExperimentB :child-experiment-num="5"/>
+          <!--数据随机-->
+          <!-- <ExperimentB :child-experiment-num="5"/>-->
+          <!-- 数据不随机-->
+          <ExperimentBFixedData :child-experiment-num="5"/>
         </el-tab-pane>
         <el-tab-pane name="ExperimentCTraining">
           <span slot="label" class="navigation">实验二(实验练习)</span>
-          <ExperimentCTraining/>
+          <!-- <ExperimentCTraining/>-->
+          <ExperimentCFixedDataTraining :child-experiment-num="1"/>
         </el-tab-pane>
         <el-tab-pane name="ExperimentC">
           <span slot="label" class="navigation">实验二(正式实验)</span>
-          <ExperimentC/>
+          <!-- <ExperimentC/>-->
+          <ExperimentCFixedData :child-experiment-num="3"/>
         </el-tab-pane>
-<!--        <el-tab-pane name="Test">-->
-<!--          <span slot="label" class="navigation">测试</span>-->
-<!--          <Test/>-->
-<!--        </el-tab-pane>-->
+        <!--        <el-tab-pane name="Test">-->
+        <!--          <span slot="label" class="navigation">测试</span>-->
+        <!--          <Test/>-->
+        <!--        </el-tab-pane>-->
       </el-tabs>
     </el-main>
   </el-container>
@@ -39,6 +47,10 @@ import GlyphIntroduction from "@/pages/GlyphIntroduction";
 import ExperimentBIntroduction from "@/pages/ExperimentBIntroduction";
 import ExperimentBTraining from "@/pages/ExperimentBTraining";
 import ExperimentCTraining from "@/pages/ExperimentCTraining";
+import ExperimentBFixedData from "@/pages/ExperimentBFixedData.vue";
+import ExperimentBFixedDataTraining from "@/pages/ExperimentBFixedDataTraining.vue";
+import ExperimentCFixedData from "@/pages/ExperimentCFixedData.vue";
+import ExperimentCFixedDataTraining from "@/pages/ExperimentCFixedDataTraining.vue";
 
 export default {
   name: "MainPage",
@@ -49,7 +61,11 @@ export default {
     GlyphIntroduction,
     ExperimentC,
     Test,
-    ExperimentB
+    ExperimentB,
+    ExperimentBFixedData,
+    ExperimentBFixedDataTraining,
+    ExperimentCFixedData,
+    ExperimentCFixedDataTraining
   },
   data() {
     return {

@@ -131,8 +131,8 @@ export default {
         this.curClickGlyphData = data;
         outline.select('rect').attr('stroke-opacity', 1);
       }
-      console.log(this.curClickGlyph);
-      console.log(this.curClickGlyphData);
+      // console.log(this.curClickGlyph);
+      // console.log(this.curClickGlyphData);
     },
     // 设置glyph布局参数
     changeLayerOut(glyph, childExperiment) {
@@ -190,6 +190,7 @@ export default {
           this.allGlyph.push(g);
         }
       }
+      // console.log(this.regionInfo)
     },
   },
   mounted() {

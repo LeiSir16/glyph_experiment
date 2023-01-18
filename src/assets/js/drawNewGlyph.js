@@ -1,7 +1,6 @@
 import * as d3 from 'd3';
 import {nanoid} from "nanoid";
 import {angle_radian, cal_total_strip} from "@/assets/js/tool";
-import lo from "dayjs/esm/locale/lo";
 
 let attrChinese = {
     tem: {

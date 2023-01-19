@@ -16,8 +16,6 @@ export const mixinExperimentBFixedData = {
         return {
             // 当前进行实验的编号 一共是childExperimentNum * circleNum.length * glyphType.length个实验
             curActive: 1,
-            // 刚开始默认是peaGlyph的实验
-            curShowGlyph: 1,
             // 当前进行的实验
             curExperiment: {},
             // 每个小实验的圆圈的数量
@@ -239,6 +237,7 @@ export const mixinPublicFunction = {
     data() {
         return {
             dataMax: 10,
+            curShowGlyph: 1,
         }
     },
     methods: {
@@ -252,7 +251,7 @@ export const mixinPublicFunction = {
             let experiment = this.experimentAllData[condition];
             let glyphName = glyphType === 1 ? "peaGlyph" : "stripeGlyph";
             for (const experimentElement of experiment) {
-                if (!experimentElement[glyphName]) {
+                if (experimentElement[glyphName] === false) {
                     return false;
                 }
             }
@@ -284,7 +283,8 @@ export const mixinPublicFunction = {
             while (flag) {
                 index = Math.floor(Math.random() * this.circleNum.length);
                 condition = this.circleNum[index];
-                if (!this.glyphExperimentIsFinish(this.curShowGlyph, condition)) {
+                if (this.glyphExperimentIsFinish(this.curShowGlyph, condition) === false) {
+                    // console.log(condition, "是没完成的")
                     flag = false;
                 }
             }
@@ -572,7 +572,7 @@ export const mixinExperimentCFixedData = {
                     // 因为第一个实验的开始时间在切换到这个页面的时候已经记录过了，所以不需要记录
                     this.$set(this.childExperimentRecord, "startTime", getCurrentTime());
                 }
-                if (newVal - 1 === this.totalExperimentNum / 2) {
+                if (newVal === (this.totalExperimentNum / 2) + 1) {
                     // 当前这个Glyph实验结束的话就切换Glyph
                     this.curShowGlyph = this.curShowGlyph === 1 ? 2 : 1;
                 }
@@ -623,6 +623,10 @@ export const mixinExperimentCFixedData = {
             };
         },
         taskCondition() {
+            let isChoose = false;
+            if (this.currentChooseGlyph && this.currentChooseData) {
+                isChoose = true;
+            }
             return {
                 // 前两项主要用于绘制glyph
                 experiment: this.experimentId,
@@ -632,7 +636,7 @@ export const mixinExperimentCFixedData = {
                 totalExperiment: this.totalExperimentNum,
                 curExperiment: this.curActive,
                 // 用于实验C判断是否已经选择了数据
-                isChoose: !!(this.currentChooseGlyph && this.currentChooseData),
+                isChoose,
             }
         },
     }

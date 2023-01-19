@@ -23,9 +23,6 @@
                 </template>
               </el-statistic>
             </el-col>
-            <el-col :span="2" :offset="1">
-              <el-button icon="el-icon-refresh-left" @click="resetCurrent">重置实验</el-button>
-            </el-col>
             <el-col :span="2" :offset="2" v-show="curActive === totalExperimentNum">
               <el-button type="primary" icon="el-icon-refresh-left" @click="resetTraining">重新练习</el-button>
             </el-col>
@@ -122,14 +119,6 @@ export default {
       this.experimentAllData = this.createGlyphData();
       this.curShowGlyph = Math.random() > 0.5 ? 1 : 2;
       this.curActive = 1;
-    },
-    resetCurrent() {
-      if (this.currentChooseGlyph && this.currentChooseData) {
-        this.currentChooseGlyph.select('rect').attr('stroke-opacity', 0);
-        this.currentChooseGlyph = '';
-        this.currentChooseData = {};
-        this.$bus.$emit('resetSlider');
-      }
     }
   }
 }

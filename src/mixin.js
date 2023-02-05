@@ -93,7 +93,7 @@ export const mixinExperimentBFixedData = {
                     let e_d = {
                         id: nanoid(),
                         condition: circleNumElement,
-                        experimentData: vc.randomChooseFromSourceData(sourceData, 2),
+                        experimentData: chooseData,
                         findAttr: chooseAttrs,
                         attrAlias: chooseAttrs.split(' ').join("_"),
                         correctValue,
